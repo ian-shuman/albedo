@@ -1,0 +1,17 @@
+ENVI
+description = {
+ ENVI Mosaic [Mon Apr 04 13:51:02 2022]}
+samples = 244
+lines   = 156
+bands   = 13
+data type = 4
+interleave = bip
+file type = ENVI Standard
+header offset = 0
+byte order = 0
+map info = {UTM, 1.000, 1.000, 557242.787, 7194864.359, 3.001087e+01, 3.003850e+01, 3, North, WGS-84, units=Meters}
+coordinate system string = {PROJCS["WGS_1984_UTM_Zone_3N",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",500000.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",-165.0],PARAMETER["Scale_Factor",0.9996],PARAMETER["Latitude_Of_Origin",0.0],UNIT["Meter",1.0]]}
+x start = 695
+y start = 183
+data ignore value = 0.000000e+00
+sensor type = Unknown
