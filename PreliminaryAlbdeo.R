@@ -13,6 +13,7 @@ setwd("~/Downloads/albedo/Data")
 summer_albedo <- rast('council_watershed_albedo_summer.tif') #1
 winter_albedo <- rast('council_watershed_albedo_winter.tif') #1
 canopy_height_model <- rast('council_watershed_chm_30m.tif') #4
+canopy_height_model[canopy_height_model < 0] <- NA #there are about 6000 negative values which I think should be removed
 aspect <- rast('council_watershed_aspect_30m.tif') #2
 slope <- rast('council_watershed_slope_30m.tif') #2
 topo <- rast('council_watershed_topo_30m.tif') #what is this #2
@@ -54,7 +55,13 @@ stack_df <- as.data.frame(stack, xy = TRUE)
 plot(stack$council_watershed_fcover_30m_2, stack$council_watershed_albedo_summer) 
 plot(stack$council_watershed_fcover_30m_2, stack$council_watershed_albedo_winter)
 
- 
+hist(stack_df$council_watershed_chm_30m)
+hist(stack_df$council_watershed_chm_30m)
+
+stack_df$council_watershed_chm_30m[stack_df$council_watershed_chm_30m <0] <- NA
+canopy_height_model[canopy_height_model < 0] <- NA
+plot(canopy_height_model)
+
 
 plot(stack$council_watershed_tri_30m, stack$council_watershed_tpi_30m)
 
@@ -119,6 +126,17 @@ ggplot(data = stack_df, aes(x = shrubcover, y = council_watershed_albedo_winter)
   geom_point()+
   geom_smooth(method = "lm", se=FALSE)
 
+
+ggplot(data = stack_df, aes(x = category, y = council_watershed_albedo_summer))+
+  geom_boxplot()
+ggplot(data = stack_df, aes(x = category, y = council_watershed_albedo_winter))+
+  geom_boxplot()
+ggplot(data = stack_df, aes(x = category, y = council_watershed_chm_30m))+
+  geom_boxplot()
+
+ggplot(data = stack_df, aes(x = council_watershed_chm_30m, y = council_watershed_albedo_winter))+
+  geom_point()+
+  geom_smooth(method = "lm", se=FALSE)
 
 #Making simple models
 winter_shrubmodel <- lm(stack_df$council_watershed_albedo_winter ~ stack_df$shrubcover)
