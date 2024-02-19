@@ -21,6 +21,8 @@ tpi <- rast('council_watershed_tpi_30m.tif')  #2 #topographic position index, po
 tri <- rast('council_watershed_tri_30m.tif') #terrain ruggedness index, higher values mean more heterogeneity in the surrounding cells #2
 fcover <- rast('~/Downloads/albedo/Data/council_watershed_fcover_30m.dat') #3
 pft <- rast('~/Downloads/albedo/Data/council_watershed_pft_30m.dat') #3
+original_albedo <- read.table('~/Downloads/albedo/Data/council_watershed_albedo_ts_orignal.dat')
+smoothed_albedo <- read.table('~/Downloads/albedo/Data/council_watershed_albedo_ts_smoothed.dat', skip = 5)
 
 
 #Define the minimum extent to which we should crop all rasters
@@ -134,7 +136,7 @@ ggplot(data = stack_df, aes(x = category, y = council_watershed_albedo_winter))+
 ggplot(data = stack_df, aes(x = category, y = council_watershed_chm_30m))+
   geom_boxplot()
 
-ggplot(data = stack_df, aes(x = council_watershed_chm_30m, y = council_watershed_albedo_winter))+
+ggplot(data = stack_df, aes(x = council_watershed_chm_30m, y = council_watershed_albedo_summer))+
   geom_point()+
   geom_smooth(method = "lm", se=FALSE)
 
