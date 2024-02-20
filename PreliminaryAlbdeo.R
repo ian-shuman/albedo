@@ -67,7 +67,13 @@ plot(canopy_height_model)
 
 plot(stack$council_watershed_tri_30m, stack$council_watershed_tpi_30m)
 
+
 barplot(pft, col = c("black", "red", "darkgreen", "lightgreen", "cyan", "blue", "yellow", "cyan","blue", "green", "pink", "orange", "white", "gray"))
+barplot(stack_df$category, col = c("black", "red", "darkgreen", "lightgreen", "cyan", "blue", "yellow", "cyan","blue", "green", "pink", "orange", "white", "gray"))
+barplot(table(stack_df$category),
+        ylab = "Frequency",
+        xlab = "Category",
+        col = c("black", "red", "darkgreen", "lightgreen", "cyan", "blue", "yellow", "cyan","blue", "green", "pink", "orange", "white", "gray"))
 
 
 #Pearson's correlation coefficient over space
@@ -78,9 +84,20 @@ tri_tpi <- rasterCorrelation(stack$council_watershed_tri_30m, stack$council_wate
 plot(tri_tpi)
 
 #Linear regression - try with 
-test <- lm(council_watershed_albedo_summer ~ council_watershed_chm_30m + council_watershed_topo_30m + council_watershed_tpi_30m + council_watershed_tri_30m + council_watershed_slope_30m + council_watershed_aspect_30m + Spruce_fcover + Alder_fcover + Willow_fcover + OtherTall_fcover + LowShrubs_fcover + EvergreenShrubs_fcover + DryGrass_fcover, data = as.data.frame(stack))#group together all things which might influence surface albedo
+test <- lm(council_watershed_albedo_summer ~ council_watershed_chm_30m + council_watershed_topo_30m + council_watershed_tpi_30m + council_watershed_tri_30m + council_watershed_slope_30m + council_watershed_aspect_30m + Spruce_fcover + Alder_fcover + Willow_fcover + OtherTall_fcover + LowShrubs_fcover + EvergreenShrubs_fcover + DryGrass_fcover, data = stack_df, na.action = na.exclude)#group together all things which might influence surface albedo
 test2 <- lm(council_watershed_albedo_summer ~ council_watershed_chm_30m + council_watershed_topo_30m + council_watershed_tpi_30m + council_watershed_tri_30m + council_watershed_slope_30m + council_watershed_aspect_30m, data = as.data.frame(stack))#group together all things which might influence surface albedo besides fcover which has NAs
 
+#Using only the topography variables - R2 = 0.1521
+noveg <- lm(council_watershed_albedo_summer ~ council_watershed_topo_30m + council_watershed_tpi_30m + council_watershed_tri_30m + council_watershed_slope_30m + council_watershed_aspect_30m, data = stack_df)#group together all things which might influence surface albedo besides fcover which has NAs
+
+#Using only CHM and topography variables - R2 = 0.2192 
+only.structure <- lm(council_watershed_albedo_summer ~ council_watershed_chm_30m + council_watershed_topo_30m + council_watershed_tpi_30m + council_watershed_tri_30m + council_watershed_slope_30m + council_watershed_aspect_30m, data = stack_df)#group together all things which might influence surface albedo besides fcover which has NAs
+
+#Using only fcover of Spruce, Alder, and Willow and topography variables - R2 = 0.7227
+only.SAWcomp <- lm(council_watershed_albedo_summer ~ council_watershed_topo_30m + council_watershed_tpi_30m + council_watershed_tri_30m + council_watershed_slope_30m + council_watershed_aspect_30m + Spruce_fcover + Alder_fcover + Willow_fcover, data = stack_df)#group together all things which might influence surface albedo besides fcover which has NAs
+
+#Using fcover of Spruce, Alder, and Willow, CHM, and topography variables - R2 = 0.8996
+structure.SAWcomp <- lm(council_watershed_albedo_summer ~ council_watershed_chm_30m + council_watershed_topo_30m + council_watershed_tpi_30m + council_watershed_tri_30m + council_watershed_slope_30m + council_watershed_aspect_30m + Spruce_fcover + Alder_fcover + Willow_fcover, data = stack_df)#group together all things which might influence surface albedo besides fcover which has NAs
 
 
 #DwarfShrubs_fcover, Forb_fcover, WetGrass_fcover, Moss_fcover, Lichen_fcover, NPV_fcoverall NA!
@@ -118,6 +135,10 @@ ggplot(data = stack_df, aes(x = Alder_fcover, y = council_watershed_albedo_winte
   geom_point()+
   geom_smooth(method = "lm", se=FALSE)
 
+ggplot(data = stack_df, aes(x = Alder_fcover, y = Spruce_fcover))+
+  geom_point()+
+  geom_smooth(method = "lm", se=FALSE)
+
 stack_df$shrubcover <- stack_df$Alder_fcover + stack_df$Willow_fcover
 
 ggplot(data = stack_df, aes(x = shrubcover, y = council_watershed_albedo_summer))+
@@ -127,7 +148,9 @@ ggplot(data = stack_df, aes(x = shrubcover, y = council_watershed_albedo_summer)
 ggplot(data = stack_df, aes(x = shrubcover, y = council_watershed_albedo_winter))+
   geom_point()+
   geom_smooth(method = "lm", se=FALSE)
-
+ggplot(data = stack_df, aes(x = shrubcover, y = council_watershed_chm_30m))+
+  geom_point()+
+  geom_smooth(method = "lm", se=FALSE)
 
 ggplot(data = stack_df, aes(x = category, y = council_watershed_albedo_summer))+
   geom_boxplot()
@@ -136,9 +159,12 @@ ggplot(data = stack_df, aes(x = category, y = council_watershed_albedo_winter))+
 ggplot(data = stack_df, aes(x = category, y = council_watershed_chm_30m))+
   geom_boxplot()
 
-ggplot(data = stack_df, aes(x = council_watershed_chm_30m, y = council_watershed_albedo_summer))+
+ggplot(data = stack_df, aes(x = council_watershed_chm_30m, y = council_watershed_albedo_summer, color = category, shape = "."))+
   geom_point()+
-  geom_smooth(method = "lm", se=FALSE)
+  scale_color_manual(values = c("black", "red", "darkgreen", "lightgreen", "cyan", "blue", "yellow", "cyan","blue", "green", "pink", "orange", "white", "gray"))
+ggplot(data = stack_df, aes(x = council_watershed_chm_30m, y = council_watershed_albedo_summer, color = category))+
+  geom_point()+
+  scale_color_manual(values = c("white", "red", "red", "red", "red", "blue", "blue", "blue", "blue", "blue", "blue", "blue", "blue"))
 
 #Making simple models
 winter_shrubmodel <- lm(stack_df$council_watershed_albedo_winter ~ stack_df$shrubcover)
@@ -156,11 +182,17 @@ fullmodel_winter <- lm(council_watershed_albedo_winter ~ council_watershed_chm_3
 summary(fullmodel_winter) #for some reason, including the less common PFTs causes the model to throw an error
 
 
+### Try Random Forest, varpart in vegan
+library(randomForest)
+filtered_stack <- stack_df[,3:23]
+filtered_stack <- filtered_stack[,c(1:7, 9:21)]
+filtered_stack <- filtered_stack[-is.na(filtered_stack$council_watershed_albedo_summer),]
+RF <- randomForest(council_watershed_albedo_summer ~ ., data = filtered_stack)
 
+#Try varpart
+library(vegan)
+varmodel <- varpart(y = council_watershed_albedo_summer, X = council_watershed_chm_30m + council_watershed_slope_30m + Alder_fcover + Willow_fcover, data = stack_df)
 
-
-
-
-
-
-
+#Try PCA
+filtered_stack <- stack_df[275:37788,3:8]
+pca <- prcomp(filtered_stack)
