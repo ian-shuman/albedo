@@ -16,7 +16,7 @@ options(warn = -1)
 #****************************** load required libraries **********************************#
 ### install and load required R packages
 list.of.packages <- c("ggplot2", "readr", "GMCM", "reshape2", "raster", "ggpmisc", 
-                      "randomForest", "caTools", "pls", "spectratrait")
+                      "randomForest", "caTools", "pls", "spectratrait", "terra")
 # check for dependencies and install if needed
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages, dependencies=c("Depends", "Imports",
@@ -27,12 +27,14 @@ if (!packageVersion("ggplot2") >= version_requirements[1]) {
                            dependencies=c("Depends", "Imports", "LinkingTo"), upgrade="ask",
                            quiet=TRUE)
 }
+
+
 # load libraries
 invisible(lapply(list.of.packages, library, character.only = TRUE))
 #*****************************************************************************************#
 
 #************************************ user parameters ************************************#
-outDIR <- "\\\\modex.bnl.gov\\data2\\dyang\\projects\\albedo_scaling\\ngee_watersheds\\council\\map_stats"
+outDIR <- "/Users/anncrumlish/Downloads/albedo analysis/map_stats"
 ### Create output folders
 if (! file.exists(outDIR)) dir.create(outDIR,recursive=TRUE)
 
@@ -49,7 +51,7 @@ VIP <- function(object) {
 #*****************************************************************************************#
 
 #************************************** load data ****************************************#
-dataDIR <- "\\\\modex.bnl.gov\\data2\\dyang\\projects\\albedo_scaling\\zzzOld\\analysis\\structure_albedo\\map_analysis\\image_stats.csv"
+dataDIR <- "/Users/anncrumlish/Downloads/albedo analysis/map_analysis/image_stats.csv"
 dataORIG <- read.csv(dataDIR, header = TRUE)
 dataORIG$PFT[dataORIG$PFT == 2] <- 100
 dataORIG$PFT[dataORIG$PFT == 3] <- 101
@@ -58,13 +60,17 @@ dataORIG$PFT[dataORIG$PFT == 100] <- 3
 dataORIG$PFT[dataORIG$PFT == 101] <- 4
 #*****************************************************************************************#
 # load in fcover map
-mapDIR <- "\\\\modex.bnl.gov\\data2\\dyang\\projects\\albedo_scaling\\ngee_watersheds\\council\\veg\\council_watershed_pft_30m.dat"
+mapDIR <- "/Users/anncrumlish/Downloads/albedo analysis/veg/council_watershed_pft_30m.dat"
 mapORIG <- raster(mapDIR)
-cols <- mapORIG@legend@colortable[-c(1, 6:8)]
+raw_cols <- c('#000000', '#FF0000', '#008000', '#00CD00', '#669999', '#0066FF', '#FFFF66', '#66FFFF', '#00B0F0', '#00FF67', '#FF67FF', '#CC6600', '#FFFFFF', '#5A5A5A')
+#When I load in mapORIG, the colortable is blank. I can get the proper colors if I load mapORIG as a spatRaster, but do not know how to using raster. I have manually created a vector of the colors by converting the spatRaster coltab into hex here
+#mapORIG2 <- terra::rast(mapDIR)
+#coltab(mapORIG2)
+cols <- raw_cols[-c(1, 6:8)]
 cols <- c(cols[1], cols[4], cols[2:3], cols[-c(1:4)])
 #********************************** plot pft albedo **************************************#
 # extract pft winter albedo
-albedoWT <- cbind(dataORIG[3:16], dataORIG[c(20)])
+albedoWT <- cbind(dataORIG[4:17], dataORIG[c(22)])
 albedoWT[albedoWT > 10000] <- 10000
 albedoWT[albedoWT < 0] <- 0
 albedoWT[which(albedoWT$PFT == 0),] <- NA
@@ -118,7 +124,7 @@ ggsave(pdfNAME, plot = last_plot(), width = 16, height = 13, units = 'cm')
 
 
 # extract pft summer albedo
-albedoSM <- cbind(dataORIG[3:16], dataORIG[c(21)])
+albedoSM <- cbind(dataORIG[4:17], dataORIG[c(23)])
 albedoSM[albedoSM > 10000] <- 10000
 albedoSM[albedoSM < 0] <- 0
 albedoSM[which(albedoSM$PFT == 0),] <- NA
@@ -158,7 +164,7 @@ ggsave(pdfNAME, plot = last_plot(), width = 16, height = 13, units = 'cm')
 
 #******************************* plot  structure-albedo **********************************#
 # extract pft winter albedo
-albedoSTR <- cbind(dataORIG[3], dataORIG[c(17)], dataORIG[c(20, 21)])
+albedoSTR <- cbind(dataORIG[3], dataORIG[c(18)], dataORIG[c(22, 23)])
 albedoSTR[albedoSTR > 10] <- NA
 albedoSTR[albedoSTR < 0] <- NA
 albedoSTR[which(albedoSTR$PFT == 0),] <- NA
@@ -241,7 +247,7 @@ ggsave(pdfNAME, plot = last_plot(), width = 12, height = 10, units = 'cm')
 
 
 #******************************* plot  pft structure *************************************#
-pftSTR <- cbind(dataORIG[3:16], dataORIG[c(17)])
+pftSTR <- cbind(dataORIG[4:17], dataORIG[c(18)])
 pftSTR[pftSTR > 20] <- NA
 pftSTR[pftSTR < 0] <- NA
 pftSTR[which(pftSTR$PFT == 0),] <- NA
@@ -273,7 +279,7 @@ ggsave(pdfNAME, plot = last_plot(), width = 16, height = 13, units = 'cm')
 
 
 #******************************* plot  fcover albedo *************************************#
-fcoverALBEDO <- cbind(dataORIG[3:16], dataORIG[c(17)], dataORIG[c(20, 21)])
+fcoverALBEDO <- cbind(dataORIG[4:17], dataORIG[c(18)], dataORIG[c(22, 23)])
 fcoverALBEDO[fcoverALBEDO > 15] <- NA
 fcoverALBEDO[fcoverALBEDO < 0] <- NA
 fcoverALBEDO[which(fcoverALBEDO$PFT == 0),] <- NA
@@ -367,7 +373,8 @@ for (pft in pfts[-c(6:8)])
 
 #******************************** run a PLSR analysis ************************************#
 # run RF on 
-dataRF <- dataORIG[, -c(1,2, 22)]
+#dataRF <- dataORIG[, -c(1,2, 22)]
+dataRF <- dataORIG[, -c(1,2, 3, 21, 23, 24:ncol(dataORIG))]
 dataRF$CHM[dataRF$CHM > 15] <- NA
 dataRF$CHM[dataRF$CHM < 0] <- NA
 dataRF[which(dataRF$PFT == 0),] <- NA
@@ -393,7 +400,7 @@ for (pft in pfts[-c(6:8)])
 }
 
 ### plsr model on winter albedo
-dataIN_WT <- na.omit(dataIN[-c(1,16)])
+dataIN_WT <- na.omit(dataIN[-c(1,17)])
 dataIN_WT$winter_albedo <- log(dataIN_WT$winter_albedo/(1-dataIN_WT$winter_albedo))
 # create training and test samples
 sample = sample.split(dataIN_WT$winter_albedo, SplitRatio = .7, group = dataIN_WT$PFT)
