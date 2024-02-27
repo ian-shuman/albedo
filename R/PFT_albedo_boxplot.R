@@ -4,7 +4,7 @@ out.dir <- 'G:\\MyWork\\Albedo_Scaling\\Figures'
 
 data.dir <- 'G:\\MyWork\\Albedo_Scaling\\Data_Processing\\Step5_PFT_Albedo_Analysis\\PFT_Summer_Albedo'
 file.list <- list.files(data.dir, pattern = '.csv', recursive = TRUE, full.names = TRUE)
-
+#this script seems like an old version which creates a boxplot of albedo for pfts, which is also created in albedo_analyzer_v1.R
 data.combn <- c()
 for (file in file.list)
 {

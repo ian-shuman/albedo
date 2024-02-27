@@ -34,24 +34,24 @@ options(digits = 15)
 
 #------------------------------ Set output directory -------------------------------------#
 ### Set ouput directory
-out.dir <- '\\\\modex.bnl.gov\\data2\\dyang\\projects\\albedo_scaling\\ngee_watersheds\\council\\get_albedo\\step4_smoothed_ts\\'
+out.dir <- '/Users/anncrumlish/Downloads/albedo analysis/step4_smoothed_tsstep4_smoothed_ts/'
 
 ### Create output folders
 if (! file.exists(out.dir)) dir.create(out.dir,recursive=TRUE)
 #-----------------------------------------------------------------------------------------#
 
 #-------------------------------- Load in data--------------------------------------------#
-data.dir <- '\\\\modex.bnl.gov\\data2\\dyang\\projects\\albedo_scaling\\ngee_watersheds\\council\\get_albedo\\step4_smoothed_ts\\SG_Smoothed_council_lidar_area_albedo_ts_2013_2019.dat'
+data.dir <- '/Users/anncrumlish/Downloads/albedo analysis/step4_smoothed_ts/SG_Smoothed_council_lidar_area_albedo_ts_2013_2019.dat'
 albedo.raster <- stack(data.dir)
 #-----------------------------------------------------------------------------------------#
 
-albedo.df <- as.data.frame(albedo.raster)
+albedo.df <- as.data.frame(albedo.raster) #50 to 296 is the albedo on each individual day of the year for the summer
 band.names <- names(albedo.df)
 doy <- parse_number(band.names)
 
 num.pixels <- nrow(albedo.df)
 
-break.points.all <- c()
+break.points.all <- c() #do a different regression/model on different segments of the data, data is segmeted by finding the "breakpoints"
 for (i in 1:num.pixels)
 {
   print(paste(i, 'of', num.pixels))
@@ -64,7 +64,7 @@ for (i in 1:num.pixels)
   
   
   #---------------------
-  # example plot
+  # example plot for a single pixel
   data.combn <- data.combn[1:(nrow(data.combn)-1),]
   bp <- breakpoints(albedo ~ doy, data = data.combn, breaks = 2)
   
@@ -97,7 +97,10 @@ break.point.raster <- raster(break.points.all, template = albedo.raster)
 
 writeRaster(break.point.raster, filename=file.path(out.dir, "break_point_30m.tif"), format="GTiff", overwrite=TRUE)
 
+##Using previously created .tif to avoid running the long loop again
 
+break.point.raster <- raster('break_point_30m.tif')
+plot(break.point.raster) #this shows the spatial distribution of doy break points, it is earliest near the bottomlands and later up on the hill slope (willow/alder)
 
 
 
