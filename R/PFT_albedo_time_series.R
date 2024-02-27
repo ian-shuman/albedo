@@ -1,9 +1,9 @@
 library(ggplot2)
 library(matrixStats)
 
-out.dir <- '\\\\modex.bnl.gov\\data2\\dyang\\projects\\albedo_scaling\\ngee_watersheds\\council\\pft_stats'
+out.dir <- "/Users/anncrumlish/Downloads/albedo analysis/pft_stats"
 
-data.dir <- '\\\\modex.bnl.gov\\data2\\dyang\\projects\\albedo_scaling\\ngee_watersheds\\council\\pft_stats\\PFT_Albedo_Mean_and_SD.csv'
+data.dir <- '/Users/anncrumlish/Downloads/albedo analysis/pft_stats/PFT_Albedo_Mean_and_SD.csv'
 data.original <- read.csv(data.dir, header = T)
 data.original[data.original > 10000] <- 10000
 
@@ -31,7 +31,7 @@ bin.start <- doy.min
 bin.end <- bin.start+bin.size
 bin.stats.mean <- c()
 bin.stats.sd <- c()
-while (bin.end < doy.max)
+while (bin.end < doy.max) #calculate the 15 day average for albedo per pft over DOY
 {
   bin.data <- data.combn[which(data.combn > bin.start & data.combn < bin.end), ]
   z.scores <- apply(bin.data, 2, scale)
