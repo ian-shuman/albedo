@@ -68,6 +68,15 @@ raw_cols <- c('#000000', '#FF0000', '#008000', '#00CD00', '#669999', '#0066FF', 
 #coltab(mapORIG2)
 cols <- raw_cols[-c(1, 6:8)]
 cols <- c(cols[1], cols[4], cols[2:3], cols[-c(1:4)])
+
+#make breakpoints dataset
+breakpoints <- raster("/Users/anncrumlish/Downloads/albedo analysis/step4_smoothed_ts/break_point_30m.tif")
+test <- raster(nrow = 154, ncol = 242)
+breakpoints.df <- as.data.frame(breakpoints, xy = T)
+breakpoints2 <- resample(breakpoints, mapORIG)
+
+
+
 #********************************** plot pft albedo **************************************#
 # extract pft winter albedo
 albedoWT <- cbind(dataORIG[4:17], dataORIG[c(22)])
@@ -298,7 +307,7 @@ for (pft in pfts[-c(6:8)])
   names(pftDF) <- c('fcover', 'chm', 'albedoWT', 'albedoSM')
   pftDF <- na.omit(pftDF)
   # make a pft struccture scatter plot
-  ggplot(data=pftDF, aes(x=fcover, y=albedoSM)) +
+  ggplot(data=pftDF, aes(x=fcover, y=albedoWT)) +
     geom_hex(aes(fill=stat(log(count))), bins = 50, 
              breaks = log(c(0, 1, 2, 4, 6))) +
     scale_fill_viridis_c() +
@@ -316,7 +325,7 @@ for (pft in pfts[-c(6:8)])
     #stat_poly_eq(aes(label = paste(..rr.label.., sep = "~~~")), 
     #             label.x.npc = 6, label.y.npc = 0.85,
     #             formula = my.formula, parse = TRUE, size = 4) +
-    xlab("fCover") + ylab("Summer Albedo") +
+    xlab("fCover") + ylab("Winter Albedo") +
     theme(legend.position = "", 
           legend.title = element_blank(), 
           legend.key.size = unit(0.4, 'cm'),
@@ -330,11 +339,11 @@ for (pft in pfts[-c(6:8)])
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank())
   
-  pdfNAME = paste0(outDIR, "/", pft, "_fcover_summer_albedo_regression.pdf")
+  pdfNAME = paste0(outDIR, "/", pft, "_fcover_winter_albedo_regression.pdf")
   ggsave(pdfNAME, plot = last_plot(), width = 10, height = 9, units = 'cm')
 
   
-  ggplot(data=pftDF, aes(x=chm, y=albedoSM)) +
+  ggplot(data=pftDF, aes(x=chm, y=albedoWT)) +
     geom_hex(aes(fill=stat(log(count))), bins = 50, 
              breaks = log(c(0, 1, 2, 4, 6))) +
     scale_fill_viridis_c() +
@@ -352,7 +361,7 @@ for (pft in pfts[-c(6:8)])
     #stat_poly_eq(aes(label = paste(..rr.label.., sep = "~~~")), 
     #             label.x.npc = 6, label.y.npc = 0.85,
     #             formula = my.formula, parse = TRUE, size = 4) +
-    xlab("CHM") + ylab("Summer Albedo") + 
+    xlab("CHM") + ylab("Winter Albedo") + 
     theme(legend.position = "", 
           legend.title = element_blank(), 
           legend.key.size = unit(0.4, 'cm'),
@@ -366,7 +375,7 @@ for (pft in pfts[-c(6:8)])
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank())
   
-  pdfNAME = paste0(outDIR, "/", pft, "_chm_summer_albedo_regression.pdf")
+  pdfNAME = paste0(outDIR, "/", pft, "_chm_winter_albedo_regression.pdf")
   ggsave(pdfNAME, plot = last_plot(), width = 10, height = 9, units = 'cm')
 }
 #*****************************************************************************************#
@@ -374,7 +383,7 @@ for (pft in pfts[-c(6:8)])
 #******************************** run a PLSR analysis ************************************#
 # run RF on 
 #dataRF <- dataORIG[, -c(1,2, 22)]
-dataRF <- dataORIG[, -c(1,2, 3, 21, 23, 24:ncol(dataORIG))]
+dataRF <- dataORIG[, -c(1,2, 3, 21, 24:ncol(dataORIG))]
 dataRF$CHM[dataRF$CHM > 15] <- NA
 dataRF$CHM[dataRF$CHM < 0] <- NA
 dataRF[which(dataRF$PFT == 0),] <- NA
@@ -399,8 +408,13 @@ for (pft in pfts[-c(6:8)])
   }
 }
 
+RF_SM <- randomForest(summer_albedo ~ DTSA + DTSW + DT + DLS + DG + WG + MO + LI + NVS + CHM + DEM + slope, data = dataRF, importance = T)
+RF_WT <- randomForest(winter_albedo ~ DTSA + DTSW + DT + DLS + DG + WG + MO + LI + NVS + CHM + DEM + slope, data = dataRF, importance = T)
+#did plsr because of the collinearity between the fcover variables
+
+
 ### plsr model on winter albedo
-dataIN_WT <- na.omit(dataIN[-c(1,17)])
+dataIN_WT <- na.omit(dataIN[-c(1,16)])
 dataIN_WT$winter_albedo <- log(dataIN_WT$winter_albedo/(1-dataIN_WT$winter_albedo))
 # create training and test samples
 sample = sample.split(dataIN_WT$winter_albedo, SplitRatio = .7, group = dataIN_WT$PFT)

@@ -51,7 +51,8 @@ doy <- parse_number(band.names)
 
 num.pixels <- nrow(albedo.df)
 
-break.points.all <- c() #do a different regression/model on different segments of the data, data is segmeted by finding the "breakpoints"
+break.points.all.1 <- c() #do a different regression/model on different segments of the data, data is segmeted by finding the "breakpoints"
+break.points.all.2 <- c()
 for (i in 1:num.pixels)
 {
   print(paste(i, 'of', num.pixels))
@@ -82,11 +83,14 @@ for (i in 1:num.pixels)
   ggsave(png.name, plot = last_plot(), width = 16, height = 10, units = 'cm')  
   #---------------------
   
-  break.points <- bp$breakpoints[2]
+  break.points.1 <- bp$breakpoints[1]
+  break.points.2 <- bp$breakpoints[2]
   
-  break.doy <- data.combn$doy[break.points]
+  break.doy.1 <- data.combn$doy[break.points.1]
+  break.doy.2 <- data.combn$doy[break.points.2]
 
-  break.points.all <- rbind(break.points.all, break.doy)
+  break.points.all.1 <- rbind(break.points.all.1, break.doy.1)
+  break.points.all.2 <- rbind(break.points.all.2, break.doy.2)
 }
 
 
@@ -98,13 +102,13 @@ break.point.raster <- raster(break.points.all, template = albedo.raster)
 writeRaster(break.point.raster, filename=file.path(out.dir, "break_point_30m.tif"), format="GTiff", overwrite=TRUE)
 
 ##Using previously created .tif to avoid running the long loop again
-
+setwd("/Users/anncrumlish/Downloads/albedo analysis/step4_smoothed_ts")
 break.point.raster <- raster('break_point_30m.tif')
 plot(break.point.raster) #this shows the spatial distribution of doy break points, it is earliest near the bottomlands and later up on the hill slope (willow/alder)
+break.point.raster #breakpoint ranges from May 1 to Sep. 16
+#assuming that break point indicates some change in phenology, now you should plot breakpoint pixels against chm, or against pft fcover
 
-
-
-
+stack <- rasterToPoints(break.point.raster)
 
 
 

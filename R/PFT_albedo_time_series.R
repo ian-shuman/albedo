@@ -25,7 +25,7 @@ names(data.combn) <- c('DOY', 'EVT', 'DTSA', 'DTSW', 'DTSO', 'DLS', 'EVS', 'DGR'
 
 doy.min <- 46
 doy.max <- 286
-bin.size <- 15
+bin.size <- 7 #changed from 15
 
 bin.start <- doy.min
 bin.end <- bin.start+bin.size
@@ -75,9 +75,10 @@ y10 <- 0.55
 x_int = 10
 y_r <- 0.015
 
-cols <- RColorBrewer::brewer.pal(10, 'Spectral')
-cols <- rev(cols)
-#cols <- c("red", "blue", "green", "seagreen","dimgrey", "#9966FF", "#FF66CC")
+cols <- c('#FF0000', '#008000', '#669999', '#00CD00', '#FF67FF', '#0066FF', '#CC6600', '#00FF67', '#FFFFFF', '#5A5A5A')
+  
+#cols <- RColorBrewer::brewer.pal(10, 'Spectral')
+#cols <- rev(cols)
 ggplot(data = bin.stats.mean) +
   geom_point(aes(x = DOY, y = EVT), colour = cols[1], size = 2.5) +
   geom_line(aes(x = DOY, y = EVT), colour = cols[1], size = 1.2) +
@@ -119,41 +120,42 @@ ggplot(data = bin.stats.mean) +
   geom_line(aes(x = DOY, y = EVS), colour = cols[10],  size = 1.2) +
   geom_ribbon(aes(x = DOY, ymin = bin.stats.mean$EVS-bin.stats.sd$EVS, ymax = bin.stats.mean$EVS+bin.stats.sd$EVS),
               fill = cols[10],alpha = 0.2) +
-  theme(axis.text = element_text(size=12), axis.title=element_text(size=14)) +
   labs(x = 'Day of Year', y = 'White Sky Albedo') + ylim(0.1, 1) +
   geom_segment(aes(x = xstart, xend = xend, y = y1, yend = y1), color = cols[1], size = 1.5) +
   annotate("rect", xmin = xstart, xmax = xend, ymin = y1-y_r, ymax = y1+y_r, alpha = .2, fill = cols[1]) +
-  annotate("text", x = xend + x_int,  y = y1, label = 'ET', hjust=0) +
+  annotate("text", x = xend + x_int,  y = y1, label = 'ET', hjust=0, size =6) +
   geom_segment(aes(x = xstart, xend = xend, y = y2, yend = y2), color = cols[2], size = 1.5) +
   annotate("rect", xmin = xstart, xmax = xend, ymin = y2-y_r, ymax = y2+y_r, alpha = .2, fill = cols[2]) +
-  annotate("text", x = xend + x_int,  y = y2, label = 'DTSA', hjust=0) +
+  annotate("text", x = xend + x_int,  y = y2, label = 'DTSA', hjust=0, size =6) +
   geom_segment(aes(x = xstart, xend = xend, y = y3, yend = y3), color = cols[3], size = 1.5) +
   annotate("rect", xmin = xstart, xmax = xend, ymin = y3-y_r, ymax = y3+y_r, alpha = .2, fill = cols[3]) +
-  annotate("text", x = xend + x_int,  y = y3, label = 'DT', hjust=0) +
+  annotate("text", x = xend + x_int,  y = y3, label = 'DT', hjust=0, size = 6) +
   geom_segment(aes(x = xstart, xend = xend, y = y4, yend = y4), color = cols[4], size = 1.5) +
   annotate("rect", xmin = xstart, xmax = xend, ymin = y4-y_r, ymax = y4+y_r, alpha = .2, fill = cols[4]) +
-  annotate("text", x = xend + x_int,  y = y4, label = 'DTSW', hjust=0) +
+  annotate("text", x = xend + x_int,  y = y4, label = 'DTSW', hjust=0, size =6) +
   geom_segment(aes(x = xstart, xend = xend, y = y5, yend = y5), color = cols[5], size = 1.5) +
   annotate("rect", xmin = xstart, xmax = xend, ymin = y5-y_r, ymax = y5+y_r, alpha = .2, fill = cols[5]) +
-  annotate("text", x = xend + x_int,  y = y5, label = 'WG', hjust=0) +
+  annotate("text", x = xend + x_int,  y = y5, label = 'WG', hjust=0, size = 6) +
   geom_segment(aes(x = xstart, xend = xend, y = y6, yend = y6), color = cols[6], size = 1.5) +
   annotate("rect", xmin = xstart, xmax = xend, ymin = y6-y_r, ymax = y6+y_r, alpha = .2, fill = cols[6]) +
-  annotate("text", x = xend + x_int,  y = y6, label = 'DLS', hjust=0) +
+  annotate("text", x = xend + x_int,  y = y6, label = 'DLS', hjust=0, size = 6) +
   geom_segment(aes(x = xstart, xend = xend, y = y7, yend = y7), color = cols[7], size = 1.5) +
   annotate("rect", xmin = xstart, xmax = xend, ymin = y7-y_r, ymax = y7+y_r, alpha = .2, fill = cols[7]) +
-  annotate("text", x = xend + x_int,  y = y7, label = 'MO', hjust=0) +
+  annotate("text", x = xend + x_int,  y = y7, label = 'MO', hjust=0, size = 6) +
   geom_segment(aes(x = xstart, xend = xend, y = y8, yend = y8), color = cols[8], size = 1.5) +
   annotate("rect", xmin = xstart, xmax = xend, ymin = y8-y_r, ymax = y8+y_r, alpha = .2, fill = cols[8]) +
-  annotate("text", x = xend + x_int,  y = y8, label = 'DG', hjust=0) +
+  annotate("text", x = xend + x_int,  y = y8, label = 'DG', hjust=0, size = 6) +
   geom_segment(aes(x = xstart, xend = xend, y = y9, yend = y9), color = cols[9], size = 1.5) +
   annotate("rect", xmin = xstart, xmax = xend, ymin = y9-y_r, ymax = y9+y_r, alpha = .2, fill = cols[9]) +
-  annotate("text", x = xend + x_int,  y = y9, label = 'LI', hjust=0) +
+  annotate("text", x = xend + x_int,  y = y9, label = 'LI', hjust=0, size = 6) +
   geom_segment(aes(x = xstart, xend = xend, y = y10, yend = y10), color = cols[10], size = 1.5) +
   annotate("rect", xmin = xstart, xmax = xend, ymin = y10-y_r, ymax = y10+y_r, alpha = .2, fill = cols[10]) +
-  annotate("text", x = xend + x_int,  y = y10, label = 'ES', hjust=0)
+  annotate("text", x = xend + x_int,  y = y10, label = 'ES', hjust=0, size = 6)+
+  theme_classic()+
+  theme(axis.text = element_text(size=27), axis.title=element_text(size=29)) 
 
 
-png.name <- paste0(out.dir, '\\', 'PFT_Albedo_Time_Series.pdf')
+png.name <- paste0(out.dir, '/', 'PFT_Albedo_Time_Series.png')
 ggsave(png.name, plot = last_plot(), width = 20, height = 15, units = 'cm')
 
 
