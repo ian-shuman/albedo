@@ -9,6 +9,7 @@ library(spatialEco)
 library(ggplot2)
 library(dplyr)
 library(cowplot)
+library(tidyverse)
 setwd("~/Downloads/albedo/Data")
 
 #Load in data
@@ -26,45 +27,37 @@ pft <- rast('~/Downloads/albedo/Data/council_watershed_pft_30m.dat') #3
 twi <- rast('~/Downloads/albedo/Data/twi.tif') #3
 breakpoints1 <- rast("/Users/anncrumlish/Downloads/albedo analysis/step4_smoothed_ts/break_point1_30m.tif")
 breakpoints <- rast("/Users/anncrumlish/Downloads/albedo analysis/step4_smoothed_ts/break_point_30m.tif")
-#original_albedo <- read.table('~/Downloads/albedo/Data/council_watershed_albedo_ts_orignal.dat')
-#smoothed_albedo <- read.table('~/Downloads/albedo/Data/council_watershed_albedo_ts_smoothed.dat', skip = 5)
+breakpoints[breakpoints > 213] <- NA
+breakpoints1[breakpoints1 < 92] <- NA
 
+pft.resamp <- resample(pft, twi)
+fcover.resamp <- resample(fcover, twi)
+summer_albedo.resamp <- resample(summer_albedo, twi)
+winter_albedo.resamp <- resample(winter_albedo, twi)
+breakpoints1.resamp <- resample(breakpoints1, twi)
+breakpoints.resamp <- resample(breakpoints, twi)
+stack <- c(canopy_height_model, topo, tpi, tri, slope, aspect, twi, summer_albedo.resamp, winter_albedo.resamp, fcover.resamp, pft.resamp, breakpoints1.resamp, breakpoints.resamp)
+stack_df <- as.data.frame(stack, xy = TRUE)
+colnames(stack_df) <- c("x", "y" , "council_watershed_chm_30m", "council_watershed_topo_30m", "council_watershed_tpi_30m" , "council_watershed_tri_30m", "council_watershed_slope_30m", "council_watershed_aspect_30m", "twi", "council_watershed_albedo_summer", "council_watershed_albedo_winter", "Spruce_fcover", "Alder_fcover" , "Willow_fcover", "OtherTall_fcover" , "LowShrubs_fcover", "DwarfShrubs_fcover", "EvergreenShrubs_fcover", "Forb_fcover" , "DryGrass_fcover", "WetGrass_fcover", "Moss_fcover", "Lichen_fcover", "NPV_fcover", "category", "break_point1_30m", "break_point_30m")
+save(stack_df, file = "stack_df.RData")
 
-#Define the minimum extent to which we should crop all rasters
-min_extent <- summer_albedo
-min_extent <- crop(min_extent, ext(winter_albedo))
-min_extent <- crop(min_extent, ext(canopy_height_model))
-min_extent <- crop(min_extent, ext(pft))
-min_extent <- crop(min_extent, ext(tri))
-min_extent <- crop(min_extent, ext(breakpoints))
-
-# Crop the rasters to the minimum extent
-summer_albedo.c <- terra::crop(summer_albedo, min_extent)
-winter_albedo.c <- terra::crop(winter_albedo, min_extent)
-canopy_height_model.c <- terra::crop(canopy_height_model, min_extent)
-aspect.c <- terra::crop(aspect, min_extent)
-slope.c <- crop(slope, min_extent)
-topo.c <- crop(topo, min_extent)
-tpi.c <- crop(tpi, min_extent)
-tri.c <- crop(tri, min_extent)
-fcover.c <- crop(fcover, min_extent)
-pft.c <- crop(pft, min_extent)
-twi.c <- crop(twi, min_extent)
-breakpoints1.c <- crop(breakpoints1, min_extent)
-breakpoints.c <- crop(breakpoints, min_extent)
-
-names(fcover.c) <- c("Spruce_fcover" , "Alder_fcover" ,"Willow_fcover" , "OtherTall_fcover",  "LowShrubs_fcover" , "DwarfShrubs_fcover" ,"EvergreenShrubs_fcover" , "Forb_fcover" ,"DryGrass_fcover" , "WetGrass_fcover","Moss_fcover" ,"Lichen_fcover","NPV_fcover")
-vegstack <- c(summer_albedo.c, winter_albedo.c, fcover.c, pft.c) #group together all layers with the same res/extent
-envistack <- c(canopy_height_model.c, topo.c, tpi.c, tri.c, slope.c, aspect.c, twi.c) #group together all layers with the same res/extent
-breakpoints.c <- breakpoints.c #placeholder to keep track, we need to do the same procedure on breakpoints as we do on envistack
-
-envistack2 <- resample(envistack, vegstack) #maybe we need to put everything in the geometry of vegstack, so that fcovers still add up to 1, fcover and albdeo are our "most important" data
-breakpoints2 <- resample(mean(breakpoints), vegstack, method = "near")
-breakpoints1 <- resample(mean(breakpoints1), vegstack)
-stack <- c(envistack2, vegstack, breakpoints1, breakpoints2)
+#Alternate resampling- there is a strange linear pattern in the breakpoints, and more layers must be resampled so not used
+chm.resamp <- resample(canopy_height_model, summer_albedo)
+topo.resamp <- resample(topo, summer_albedo)
+tpi.resamp <- resample(tpi, summer_albedo)
+tri.resamp <- resample(tri, summer_albedo)
+slope.resamp <- resample(slope, summer_albedo)
+aspect.resamp <- resample(aspect, summer_albedo)
+twi.resamp <- resample(twi, summer_albedo)
+fcover.resamp <- resample(fcover, summer_albedo)
+pft.resamp <- resample(pft, summer_albedo)
+breakpoints.resamp <- crop(breakpoints, summer_albedo)
+breakpoints1.resamp <- crop(breakpoints1, summer_albedo)
+stack <- c(chm.resamp, topo.resamp, tpi.resamp, tri.resamp, slope.resamp, aspect.resamp, twi.resamp, summer_albedo, winter_albedo, fcover.resamp, pft.resamp, breakpoints1.resamp, breakpoints.resamp)
 stack_df <- as.data.frame(stack, xy = TRUE)
 colnames(stack_df) <- c("x", "y" , "council_watershed_chm_30m", "council_watershed_topo_30m", "council_watershed_tpi_30m" , "council_watershed_tri_30m", "council_watershed_slope_30m", "council_watershed_aspect_30m", "twi", "council_watershed_albedo_summer", "council_watershed_albedo_winter", "Spruce_fcover", "Alder_fcover" , "Willow_fcover", "OtherTall_fcover" , "LowShrubs_fcover", "DwarfShrubs_fcover", "EvergreenShrubs_fcover", "Forb_fcover" , "DryGrass_fcover", "WetGrass_fcover", "Moss_fcover", "Lichen_fcover", "NPV_fcover", "category", "break_point1_30m", "break_point_30m")
 
+plot(stack$fcover[1], stack$break_point_30m)
 
 
 #preliminary plots
@@ -130,8 +123,9 @@ drivers <- as.data.frame(driver_stack)
 
 
 vegstack_df <- as.data.frame(vegstack, xy = TRUE)
-ggplot(data = stack_df, aes(x = council_watershed_albedo_summer, y = Willow_fcover))+
-  geom_point(aes(color = category, shape = "."))
+ggplot(data = stack_df, aes(x = DryGrass_fcover, y = break_point_30m))+
+  geom_point()+
+  geom_smooth(method = "lm", se=FALSE)
 
 ggplot(data = stack_df, aes(x = Willow_fcover, y = council_watershed_albedo_summer, color = category))+
   geom_point()+
@@ -177,7 +171,7 @@ ggplot(data = stack_df, aes(x = category, y = council_watershed_albedo_winter))+
   geom_boxplot()
 ggplot(data = stack_df, aes(x = category, y = council_watershed_chm_30m))+
   geom_boxplot()
-ggplot(data = stack_df, aes(x = category, y = break_point_30m))+
+ggplot(data = stack_df, aes(x = council_watershed_chm_30m, y = break_point_30m))+
   geom_violin()
 
 ggplot(data = stack_df, aes(x = council_watershed_chm_30m, y = council_watershed_albedo_summer, color = category, shape = "."))+
@@ -276,22 +270,49 @@ boxplot(break_point_30m ~ levels,data=stack_df |> mutate(levels = cut(council_wa
 title("Changes in breakpoint with changing canopy height for all PFTs")
 
 All_box <- stack_df %>%
-  mutate(levels = cut(council_watershed_chm_30m, seq(0, 12, .5))) %>%
+  mutate(levels = cut(council_watershed_chm_30m, seq(0, 12, 1))) %>%
   drop_na(levels, break_point_30m) %>%
   ggplot(aes(x = levels, y = break_point_30m)) +
-  geom_boxplot(fill = "gray") +
-  scale_y_continuous(limits = c(120, 270), breaks = seq(120, 270, by = 10))+
+  geom_boxplot(fill = "gray", outlier.shape = NA) +
+  scale_y_continuous(limits = c(120, 180), breaks = seq(120, 180, by = 10))+
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
   labs(x = "Binned Canopy Height (m)", y = "Completion of Snowmelt (DOY)")+
   theme_classic() +
   theme(axis.text = element_text(size=21, color = 'black'),
         axis.title=element_text(size=25),
         axis.text.x = element_text(angle = 45, hjust = 1))
+ggplot(data = stack_df, aes(x = cut(council_watershed_chm_30m, seq(0, 12, .5)), y = break_point_30m))+
+  geom_violin()
+
+
+ggplot(data = stack_df, aes(x=council_watershed_chm_30m, y=break_point_30m)) +
+  #geom_point(size = 1) +
+  geom_hex(aes(fill = stat(log(count))), bins = 100, 
+           breaks = log(c(0, 1, 2, 4, 6))) +
+  #scale_fill_gradient(low = 'purple4', high = 'yellow') +
+  scale_fill_viridis_c() +
+  #scale_color_manual(values = cols, labels = pfts[-c(6:8)]) +
+  #guides(color=guide_legend(ncol = 2)) +
+  xlab("Canopy Height (m)") + ylab("Completion of Spring Albedo Transition (DOY)") + xlim(0, 12) +
+  theme(legend.position = "", 
+        legend.title = element_blank(), 
+        legend.key.size = unit(0.4, 'cm'),
+        legend.text = element_text(size = 10),
+        legend.spacing.x = unit(0.2, 'cm'),
+        legend.spacing.y = unit(0.2, 'cm')) +
+  theme(axis.text = element_text(size=12, color = 'black'),
+        axis.title=element_text(size=12)) +
+  theme(axis.line = element_line(colour = "black"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+
+
 All_box_start <- stack_df %>%
   mutate(levels = cut(council_watershed_chm_30m, seq(0, 12, 1))) %>%
   drop_na(levels, break_point_30m) %>%
   ggplot(aes(x = levels, y = break_point1_30m)) +
-  geom_boxplot(fill = "gray") +
+  geom_boxplot(fill = "gray", outlier.shape = NA) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
   labs(x = "Binned Canopy Height (m)", y = "Start of Snowmelt (DOY)")+
   theme_classic() +
@@ -387,14 +408,40 @@ WG_box <- stack_WG %>%
   labs(x = "Binned Canopy Height (m)", y = "Completion of Snowmelt (DOY)", title = "Completion of Snowmelt v.s. Canopy Height for Wet Graminoid Dominated Sites")+
   theme_classic()
 
-tall_df = filter(stack_df, council_watershed_chm_30m > 5)
+tall_df = filter(stack_df, council_watershed_chm_30m > 5.5)
+tall_df = as.data.frame(tall_df)
+tall_df = filter(tall_df, is.na(break_point_30m) == F)
 mean(tall_df$break_point_30m)
-short_df = filter(stack_df, council_watershed_chm_30m < 5)
+short_df = filter(stack_df, council_watershed_chm_30m < 4.9)
+short_df = as.data.frame(short_df)
+short_df = filter(short_df, is.na(break_point_30m) == F)
 mean(short_df$break_point_30m)
 mean(short_df$break_point_30m) - mean(tall_df$break_point_30m)
+ggplot(data = tall_df, aes(x = council_watershed_chm_30m, y = break_point_30m))+
+  geom_point()+
+  geom_smooth(method = "lm", se=FALSE)+
+  stat_poly_eq(aes(label = paste(..eq.label.., sep = "~~~")), 
+               label.x.npc = 6, label.y.npc = 0.95,
+               eq.with.lhs = "italic(hat(y))~`=`~",
+               eq.x.rhs = "~italic(x)",
+               formula = my.formula, parse = TRUE, size = 4) + 
+  stat_poly_eq(aes(label = paste(..rr.label.., sep = "~~~")), 
+               label.x.npc = 6, label.y.npc = 0.85,
+               formula = my.formula, parse = TRUE, size = 4) 
+ggplot(data = short_df, aes(x = council_watershed_chm_30m, y = break_point_30m))+
+  geom_point()+
+  geom_smooth(method = "lm", se=FALSE)+
+  stat_poly_eq(aes(label = paste(..eq.label.., sep = "~~~")), 
+               label.x.npc = 6, label.y.npc = 0.95,
+               eq.with.lhs = "italic(hat(y))~`=`~",
+               eq.x.rhs = "~italic(x)",
+               formula = my.formula, parse = TRUE, size = 4) + 
+  stat_poly_eq(aes(label = paste(..rr.label.., sep = "~~~")), 
+               label.x.npc = 6, label.y.npc = 0.85,
+               formula = my.formula, parse = TRUE, size = 4) 
 
-stack_tall <- subset(stack_df, council_watershed_chm_30m > 5)
-stack_short <- subset(stack_df, council_watershed_chm_30m < 5)
+stack_tall <- subset(stack_df, council_watershed_chm_30m > 5.5)
+stack_short <- subset(stack_df, council_watershed_chm_30m < 5.5)
 t.test(stack_tall$break_point_30m, stack_short$break_point_30m)
 
 raw_cols <- c('#000000', '#FF0000', '#008000', '#00CD00', '#669999', '#0066FF', '#FFFF66', '#66FFFF', '#00B0F0', '#00FF67', '#FF67FF', '#CC6600', '#FFFFFF', '#5A5A5A')
@@ -419,6 +466,36 @@ stack_dryG <- stack_df |> subset(stack_df$category == "DryG")
 boxplot(break_point_30m ~ levels,data=stack_dryG |> mutate(levels = cut(council_watershed_chm_30m,10)),horizontal=FALSE,las=2,cex.axis=0.6, xlab = "Canopy Height Bins")
 title("Changes in breakpoint with changing canopy height for the dryG PFT")
 
+ggplot(data = stack_df, aes(x=NPV_fcover, y=break_point_30m)) +
+  #geom_point(size = 1) +
+  geom_hex(aes(fill = stat(log(count))), bins = 100, 
+           breaks = log(c(0, 1, 2, 4, 6))) +
+  #scale_fill_gradient(low = 'purple4', high = 'yellow') +
+  scale_fill_viridis_c() +
+  geom_smooth(color = 'red', method = "lm", formula = my.formula) +
+  #scale_color_manual(values = cols, labels = pfts[-c(6:8)]) +
+  #guides(color=guide_legend(ncol = 2)) +
+  stat_poly_eq(aes(label = paste(..eq.label.., sep = "~~~")), 
+               label.x.npc = 6, label.y.npc = 0.95,
+               eq.with.lhs = "italic(hat(y))~`=`~",
+               eq.x.rhs = "~italic(x)",
+               formula = my.formula, parse = TRUE, size = 4) + 
+  stat_poly_eq(aes(label = paste(..rr.label.., sep = "~~~")), 
+               label.x.npc = 6, label.y.npc = 0.85,
+               formula = my.formula, parse = TRUE, size = 4) +
+  xlab("NVS fCover") + ylab("Breakpoint (DOY)") + 
+  theme(legend.position = "", 
+        legend.title = element_blank(), 
+        legend.key.size = unit(0.4, 'cm'),
+        legend.text = element_text(size = 10),
+        legend.spacing.x = unit(0.2, 'cm'),
+        legend.spacing.y = unit(0.2, 'cm')) +
+  theme(axis.text = element_text(size=12, color = 'black'),
+        axis.title=element_text(size=12)) +
+  theme(axis.line = element_line(colour = "black"),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
 
 ggplot(data = stack_alder, aes(x = council_watershed_chm_30m, y = break_point_30m))+
   geom_point()+
@@ -428,7 +505,21 @@ ggplot(data = stack_willow, aes(x = council_watershed_chm_30m, y = break_point_3
   geom_point()+
   geom_smooth(method = "lm", se=FALSE)
 
+#Try with spline
+# Remove rows where 'council_watershed_chm_30m' or 'break_point_30m' is NA
+stack_df.t <- stack_df[complete.cases(stack_df$council_watershed_chm_30m, stack_df$break_point_30m), ]
+# Fit a spline regression
+fit <- lm(break_point_30m ~ bs(council_watershed_chm_30m), data = stack_df.t)
 
+# Create a new data frame for predictions
+pred_df <- data.frame(council_watershed_chm_30m = seq(min(stack_df.t$council_watershed_chm_30m), max(stack_df.t$council_watershed_chm_30m), length.out = 100))
+pred_df$break_point_30m <- predict(fit, newdata = pred_df)
+
+# Plot the data and the spline regression
+ggplot(stack_df.t, aes(x = council_watershed_chm_30m, y = break_point_30m)) +
+  geom_point() +
+  geom_line(data = pred_df, color = 'red') +
+  labs(x = 'Council Watershed CHM 30m', y = 'Break Point 30m')
 
 
 Calculating twi
