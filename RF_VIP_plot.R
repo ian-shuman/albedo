@@ -139,7 +139,7 @@ fill_scale_values <- setNames(colors, levels(vipPLOT.winter$pft))
 bar.winter <- ggplot(data = vipPLOT.winter, aes(x=xfactor.w, y=mean, fill=pft)) +
   geom_bar(stat = 'identity', color = "black") +
   scale_fill_manual(values = fill_scale_values) +
-  xlab("PFT") + ylab("VIP") + ggtitle("Winter")+
+  xlab("Predictor Variable") + ylab("VIP") + ggtitle("Winter")+
   theme(legend.position = "") +
   theme(axis.text = element_text(size=19, color = 'black'),
         axis.title=element_text(size=21),
@@ -240,7 +240,7 @@ xfactor <- factor(xfactor, levels = names(dataIN_WT[-c(14,15)]))
 bar.summer <- ggplot(data = vipPLOT.summer, aes(x=xfactor, y=mean, fill=pft)) +
   geom_bar(stat = 'identity', color = "black") +
   scale_fill_manual(values = fill_scale_values) +
-  xlab("PFT") + ylab("VIP") + ggtitle("Summer")+
+  xlab("Predictor Variable") + ylab("VIP") + ggtitle("Summer")+
   theme(legend.position = "") +
   theme(axis.text = element_text(size=19, color = 'black'),
         axis.title=element_text(size=21),
@@ -1224,7 +1224,7 @@ plot_grid(pdp.summer.DG, pdp.summer.ET, pdp.summer.chm, pdp.summer.DEM)
 
 #Plot both VIP plots together
 
-plot_grid(bar.summer, bar.winter, nrow = 2)
+plot_grid(bar.summer, bar.winter, nrow = 2, labels = c("A", "B"))
 plot_grid(
   bar.summer,
   ggdraw() + theme_void(),  # Empty plot for the line
