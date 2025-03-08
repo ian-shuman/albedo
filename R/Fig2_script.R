@@ -503,7 +503,7 @@ summary(rq(summer_albedo ~ CHM, data = albedoCHM, tau = 0.5))
 summary(rq(winter_albedo ~ CHM, data = albedoCHM, tau = 0.5))
 
 
-plot_grid(summer.pft, winter.pft, summer.chm, winter.chm, labels = c("A", "B", "C", "D"))
+plot_grid(summer.pft, winter.pft, summer.chm, winter.chm)
 #*****************************************************************************************#
 
 #******************************* plot  structure-albedo **********************************#
