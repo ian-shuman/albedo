@@ -289,7 +289,8 @@ pft.series.plot = ggplot(data = bin.stats.mean75) +
   annotate("text", x = xend + x_int,  y = y11p, label = 'NPV', hjust=0, size =6) +
   
   theme_classic()+
-  theme(axis.text = element_text(size=27), axis.title=element_text(size=29)) 
+  theme(axis.text = element_text(size=27), axis.title=element_text(size=29))+
+  labs(x = "Day of Year", y = "Albedo") + ylim(0.1, 1)
 pft.series.plot
 
 #Zoom into DOY 150-250 to show summer dynamics with more detail (Fig. 3c)
@@ -337,7 +338,7 @@ pft.bottom = ggplot(data = bin.stats.mean752) +
   geom_line(aes(x = DOY, y = `NPV`), colour = cols[10], size = 1.2,) +
   geom_ribbon(aes(x = DOY, ymin = bin.stats.mean752$`NPV`-bin.stats.sd752$`NPV`, ymax = bin.stats.mean752$`NPV`+bin.stats.sd752$`NPV`),
               fill = cols[10],alpha = 0.2)  +
-  labs(x = 'Day of Year', y = NULL) + ylim(0.1, 0.25) +
+  labs(x = 'Day of Year', y = 'Albedo') + ylim(0.1, 0.25) +
   
   theme_classic()+
   theme(axis.text = element_text(size=27), axis.title=element_text(size=29)) 
@@ -524,8 +525,10 @@ chm.series.plot = ggplot(data = bin.stats.mean2) +
   annotate("rect", xmin = xstart, xmax = xend, ymin = y10b-y_r, ymax = y10b+y_r, alpha = .2, fill = cols[9]) +
   annotate("text", x = xend + x_int,  y = y10b, label = '8+ m', hjust=0, size =6) +
   theme_classic()+
-  theme(axis.text = element_text(size=27), axis.title=element_text(size=29))+
-  labs(x = "Day of Year", y = "Albedo") + ylim(0.1, 1) 
+  theme(axis.text = element_text(size=27), 
+        axis.title=element_text(size=29), 
+        legend.position = c(1,0.5))+
+  labs(x = "Day of Year", y = NULL) + ylim(0.1, 1) 
 chm.series.plot
 
 #Zoom into DOY 150-250 to show summer dynamics with more detail (Fig. 3d)
@@ -577,18 +580,5 @@ chm.bottom
 
 #********************************** plot all albedo timeseries panels together *****************************************************************#
 
-plot_grid(pft.series.plot, chm.series.plot, pft.bottom, chm.bottom, ncol = 2, rel_heights = c(1.75, 1))
+plot_grid(pft.series.plot, chm.series.plot, pft.bottom, chm.bottom, ncol = 2, rel_heights = c(2, 1))
 #***********************************************************************************************************************************************#
-
-
-
-
-
-
-
-
-
-
-
-
-
