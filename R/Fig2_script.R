@@ -16,7 +16,7 @@ options(warn = -1)
 #****************************** load required libraries **********************************#
 ### install and load required R packages
 list.of.packages <- c("ggplot2", "readr", "GMCM", "reshape2", "raster", "ggpmisc", 
-                      "randomForest", "caTools", "pls", "spectratrait", "terra", "cowplot", "viridis", "multcompView", "ggpattern", "tidyr", "quantreg")
+                      "randomForest", "caTools", "pls", "spectratrait", "terra", "cowplot", "viridis", "multcompView", "ggpattern", "tidyr", "quantreg", "dplyr")
 # check for dependencies and install if needed
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages, dependencies=c("Depends", "Imports",
@@ -173,13 +173,14 @@ winter.pft = ggplot(data = albedoWT_plot, aes(x=as.factor(PFT), y=winter_albedo,
         #c(0.87, 0.37), 
         legend.title = element_blank(), 
         legend.key.size = unit(0.75, 'cm'),
-        legend.text = element_text(size = 12)) +
-  theme(axis.text = element_text(size=15, color = 'black'),
-        axis.title = element_text(size=18)) +
-  theme(axis.line = element_line(colour = "black"),
+        legend.text = element_text(size = 12),
+        axis.text = element_text(size=20, color = 'black'),
+        axis.title = element_text(size=26),
+        axis.line = element_line(colour = "black"),
         panel.background = element_blank(),
         panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())
+        panel.grid.minor = element_blank(), 
+        axis.text.x = element_text(, angle = 60, hjust = 1)) 
 winter.pft
 pdfNAME = paste0(outDIR, "/", "pft_albedo_winter_v1.pdf")
 ggsave(pdfNAME, plot = last_plot(), width = 16, height = 13, units = 'cm')
@@ -308,27 +309,27 @@ summer.pft = ggplot(data = albedoSM_plot, aes(x=as.factor(PFT), y=summer_albedo,
     pattern_angle = 45, 
     fill = NA, 
     color = "black", 
-    outliers = F
-  ) +
+    outliers = F) +
   xlab("PFT") + ylab("Summer Albedo") + ylim(0, 0.22) +
   scale_fill_manual(values = cols, name = "", labels = pfts[-c(6:8)]) +
   scale_pattern_manual(values = c("stripe", "stripe", "stripe", "stripe", NA, NA, NA, NA, NA, NA), name = "Pattern") +
   guides(fill = "none", pattern = guide_legend(ncol = 5, override.aes = list(fill = cols)))+
   scale_x_discrete(labels = pfts[-c(6:8)]) +
-  geom_segment(aes(x = 1.3, xend = 2.3, y = 0.03, yend = 0.03),  size = 1, 
+  geom_segment(aes(x = 1, xend = 2, y = 0.025, yend = 0.025),  size = 1, 
                linetype = "dashed") +
-  annotate("text", x = 2.5,  y = 0.03, 
-           label = stringr::str_wrap("Non-Woody Albedo", width = 10), hjust=0) +
-  theme(legend.position = c(0.65, 0.15), 
+  annotate("text", x = 2.2,  y = 0.025, 
+           label = stringr::str_wrap("Non-Woody Albedo", width = 10), hjust=0, size = 6) +
+  theme(legend.position = c(0.7, 0.2), 
         legend.title = element_blank(), 
-        legend.key.size = unit(0.75, 'cm'),
-        legend.text = element_text(size = 12)) +
-  theme(axis.text = element_text(size=15, color = 'black'),
-        axis.title=element_text(size=18)) +
-  theme(axis.line = element_line(colour = "black"),
+        legend.key.size = unit(1, 'cm'),
+        legend.text = element_text(size = 18),
+        axis.text = element_text(size=20, color = 'black'),
+        axis.title=element_text(size=26),
+        axis.line = element_line(colour = "black"),
         panel.background = element_blank(),
         panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())
+        panel.grid.minor = element_blank(), 
+        axis.text.x = element_text(, angle = 60, hjust = 1))
 summer.pft
 pdfNAME = paste0(outDIR, "/", "pft_albedo_summer.pdf")
 ggsave(pdfNAME, plot = last_plot(), width = 16, height = 13, units = 'cm')
@@ -356,7 +357,7 @@ ANOVA=aov(model)
 TUKEY <- TukeyHSD(x=ANOVA, 'anova.df$category', conf.level=0.95)
 plot(TUKEY , las=1 , col="brown")
 
-#Add results of Tukey test to the boxplot
+#Add results of Tukey test to the boxplot (not used in final text)
 LABELS <- generate_label_df(TUKEY , "anova.df$category")
 order <- c("ET", "DT", "DTSA", "DTSW", "DLS", "DG", "WG", "MO", "LI", "NVS")
 LABELS <- LABELS %>%
@@ -458,11 +459,11 @@ winter.chm = albedoCHM %>%
         #c(0.63, 0.09), 
         legend.title = element_blank(), 
         legend.key.size = unit(0.75, 'cm'),
-        legend.text = element_text(size = 12)) +
-  theme(axis.text = element_text(size=15, color = 'black'),
+        legend.text = element_text(size = 12),
+        axis.text = element_text(size=20, color = 'black'),
         axis.text.x = element_text(, angle = 60, hjust = 1),
-        axis.title=element_text(size=18)) +
-  theme(axis.line = element_line(colour = "black"),
+        axis.title=element_text(size=26),
+        axis.line = element_line(colour = "black"),
         panel.background = element_blank(),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
@@ -485,14 +486,14 @@ summer.chm = albedoCHM %>%
   #label = stringr::str_wrap("Non-Woody Albedo", width = 10), hjust=0) +
   scale_fill_manual(values = cols2)+
   guides(fill=guide_legend(ncol = 5)) +
-  theme(legend.position = c(0.64, 0.2), 
+  theme(legend.position = c(0.325, 0.21), 
         legend.title = element_blank(), 
         legend.key.size = unit(0.75, 'cm'),
-        legend.text = element_text(size = 12)) +
-  theme(axis.text = element_text(size=15, color = 'black'),
+        legend.text = element_text(size = 18),
+        axis.text = element_text(size=20, color = 'black'),
         axis.text.x = element_text(, angle = 60, hjust = 1),
-        axis.title=element_text(size=18)) +
-  theme(axis.line = element_line(colour = "black"),
+        axis.title=element_text(size=26),
+        axis.line = element_line(colour = "black"),
         panel.background = element_blank(),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
@@ -588,12 +589,12 @@ chm.summer
 pdfNAME = paste0(outDIR, "/", "chm_albedo_summer.pdf")
 ggsave(pdfNAME, plot = last_plot(), width = 12, height = 10, units = 'cm')
 
-plot_grid(winter.pft, summerr.pft, chm.winter, chm.summer, labels = c("A", "B", "C", "D"))
+plot_grid(winter.pft, summer.pft, chm.winter, chm.summer, labels = c("A", "B", "C", "D"))
 
 #*****************************************************************************************#
 
 
-#******************************* plot  pft structure *************************************#
+#******************************* plot  pft structure (Figure S1) *************************************#
 pftSTR <- cbind(dataORIG[4:17], dataORIG[c(18)])
 pftSTR[pftSTR > 20] <- NA
 pftSTR[pftSTR < 0] <- NA
@@ -602,23 +603,53 @@ pftSTR[which(pftSTR$PFT == 6),] <- NA
 pftSTR[which(pftSTR$PFT == 7),] <- NA
 pftSTR[which(pftSTR$PFT == 8),] <- NA
 pftSTR <- na.omit(pftSTR)
-# make a density plot for pft height
-ggplot(data = pftSTR, aes(x = factor(PFT), y = CHM, fill = factor(PFT)))+
+pftSTR_plot <- pftSTR
+pftSTR_plot$pattern_group <- ifelse(pftSTR_plot$PFT %in% c(1, 2, 3, 4), "Woody", "Non-woody")
+pft_mapping <- c("1" = "ET","2" = "DT", "3" = "DTSA", "4" = "DTSW", "5" = "DLS", "9" = "DG", "10" = "WG", "11" = "MO", "12" = "LI", "13" = "NVS")
+pft_levels <- c("ET", "DT", "DTSA", "DTSW", "DLS", "DG", "WG", "MO", "LI", "NVS")
+pftSTR_plot <- pftSTR_plot %>%
+  mutate(pft = case_when(
+    PFT == 1 ~ "ET",
+    PFT == 2 ~ "DT",
+    PFT == 3 ~ "DTSA",
+    PFT == 4 ~ "DTSW",
+    PFT == 5 ~ "DLS",
+    PFT == 9 ~ "DG",
+    PFT == 10 ~ "WG",
+    PFT == 11 ~ "MO",
+    PFT == 12 ~ "LI",
+    PFT == 13 ~ "NVS",
+    TRUE ~ NA_character_))
+pftSTR_plot$pft <- factor(pftSTR_plot$pft, levels = pft_levels)
+
+
+
+# make a boxplot plot for pft and height
+ggplot(data = pftSTR_plot, aes(x = as.factor(PFT), y = CHM, fill = as.factor(PFT), pattern = as.factor(pft)))+
   geom_boxplot(outlier.shape = NA) +
+  geom_boxplot_pattern(
+    pattern_density = 0.1, 
+    pattern_fill = "black", 
+    pattern_angle = 45, 
+    fill = NA, 
+    color = "black", 
+    outliers = F) +
   scale_fill_manual(values = cols, name = "", labels = pfts[-c(6:8)]) +
   scale_x_discrete(labels = pfts[-c(6:8)]) +
-  guides(fill=guide_legend(ncol = 2)) +
+  scale_pattern_manual(values = c("stripe", "stripe", "stripe", "stripe", NA, NA, NA, NA, NA, NA), name = "Pattern") +
+  guides(fill = "none", pattern = guide_legend(ncol = 2, override.aes = list(fill = cols)))+
   xlab("Dominant PFT") + ylab("CHM") + ylim(0, 8) +
   theme(legend.position = c(0.7, 0.7), 
         legend.title = element_blank(), 
-        legend.key.size = unit(0.75, 'cm'),
-        legend.text = element_text(size = 12)) +
-  theme(axis.text = element_text(size=13, color = 'black'),
-        axis.title=element_text(size=13)) +
+        legend.key.size = unit(1, 'cm'),
+        legend.text = element_text(size = 22)) +
+  theme(axis.text = element_text(size=20, color = 'black'),
+        axis.title=element_text(size=24)) +
   theme(axis.line = element_line(colour = "black"),
         panel.background = element_blank(),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
+
 
 pdfNAME = paste0(outDIR, "/", "pft_height.pdf")
 ggsave(pdfNAME, plot = last_plot(), width = 16, height = 13, units = 'cm')
