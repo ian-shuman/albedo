@@ -771,14 +771,14 @@ for (pft in pfts[-c(6:8)]) {
 desired_order <-c("ET", "DT", "DTSA", "DTSW", "DLS", "DG", "WG", "MO", "LI", "NVS")
 combined_df$pft <- factor(combined_df$pft, levels = desired_order)
 
-
+#Plot all regressions for albedo v.s. PFT fCover (Figs. S2-3 depending on response variable)
 ggplot(data = combined_df, aes(x = fcover, y = albedoWT)) +
   geom_hex(aes(fill = stat(log(count))), bins = 50, breaks = log(c(0, 1, 2, 4, 6))) +
   scale_fill_viridis_c() +
   geom_smooth(color = 'red', method = "lm", formula = my.formula) +
   stat_poly_eq(formula = my.formula, 
                aes(label = paste(..eq.label.., ..rr.label.., ..p.value.label.., sep = "*`,`~")), 
-               label.x.npc = 'right', label.y = 0, parse = TRUE) +
+               label.x.npc = 'right', label.y = 0, parse = TRUE, size = 4.3) +
   xlab("Fractional Cover (fCover)") + ylab("Winter Albedo") +
   theme(legend.position = "", 
         legend.title = element_blank(), 
@@ -786,24 +786,26 @@ ggplot(data = combined_df, aes(x = fcover, y = albedoWT)) +
         legend.text = element_text(size = 10),
         legend.spacing.x = unit(0.2, 'cm'),
         legend.spacing.y = unit(0.2, 'cm')) +
-  theme(axis.text = element_text(size = 12, color = 'black'),
-        axis.title = element_text(size = 12)) +
+  theme(axis.text = element_text(size = 20, color = 'black'),
+        axis.title = element_text(size = 30), 
+        axis.text.x = element_text(angle = 60, hjust = 1)) +
   theme(axis.line = element_line(colour = "black"),
         panel.background = element_blank(),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), 
         strip.background = element_blank(),
-        strip.text = element_text(color = "black", size = 12)) +
+        strip.text = element_text(color = "black", size = 28), 
+        plot.margin = unit(c(0.1, 1, 0.1, 0.1), "cm")) +
   facet_wrap(~ pft)
 
-# Plot the data using facet_wrap for CHM
+#Plot all regressions for albedo v.s. CHM (Figs. S4-5 depending on response variable)
 ggplot(data = combined_df, aes(x = chm, y = albedoWT)) +
   geom_hex(aes(fill = stat(log(count))), bins = 50, breaks = log(c(0, 1, 2, 4, 6))) +
   scale_fill_viridis_c() +
   geom_smooth(color = 'red', method = "lm", formula = my.formula) +
   stat_poly_eq(formula = my.formula, 
                aes(label = paste(..eq.label.., ..rr.label.., ..p.value.label.., sep = "*`,`~")), 
-               label.x.npc = 'right', label.y= 0, parse = TRUE) +
+               label.x.npc = 'right', label.y= 0, parse = TRUE, size = 4.3) +
   xlab("Canopy Height (m)") + ylab("Winter Albedo") + 
   theme(legend.position = "", 
         legend.title = element_blank(), 
@@ -811,12 +813,13 @@ ggplot(data = combined_df, aes(x = chm, y = albedoWT)) +
         legend.text = element_text(size = 10),
         legend.spacing.x = unit(0.2, 'cm'),
         legend.spacing.y = unit(0.2, 'cm')) +
-  theme(axis.text = element_text(size = 12, color = 'black'),
-        axis.title = element_text(size = 12)) +
+  theme(axis.text = element_text(size = 20, color = 'black'),
+        axis.title = element_text(size = 30)) +
   theme(axis.line = element_line(colour = "black"),
         panel.background = element_blank(),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), 
         strip.background = element_blank(),
-        strip.text = element_text(color = "black", size = 12)) +
+        strip.text = element_text(color = "black", size = 28), 
+        plot.margin = unit(c(0.1, 1, 0.1, 0.1), "cm")) +
   facet_wrap(~ pft)
