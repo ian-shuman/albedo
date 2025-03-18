@@ -58,21 +58,21 @@ This repository is primarily built in the R environment using R version 4.4.0.
 
  * **IDL/step2_layerstack_images.pro**: This script builds a layer-stack of time series data from the albedo product. All Landsat images of the Council site acquired between 2015 and 2019 are stacked in chronological order by day of year (DOY). 
 
-  * Inputs: Clipped Landsat surface reflectance files (GeoTIFF, .tif) from IDL/step1_landsat_clip.pro.  
+   * Inputs: Clipped Landsat surface reflectance files (GeoTIFF, .tif) from IDL/step1_landsat_clip.pro.  
   
-  * Outputs: Layer-stack of Landsat-derived surface albedo rasters (GeoTIFF, .tif). This time series is a "representative year," in which all images collected between 2015 and 2019 have been combined sequentially by DOY as if in a single year because there were not enough images collected in year individual year to analyze temporal variation in albedo. 
+   * Outputs: Layer-stack of Landsat-derived surface albedo rasters (GeoTIFF, .tif). This time series is a "representative year," in which all images collected between 2015 and 2019 have been combined sequentially by DOY as if in a single year because there were not enough images collected in year individual year to analyze temporal variation in albedo. 
 
 * **IDL/step3_time_series_smooth.pro**: This script smooths the albedo time series using a Savitzky-Golay filter and removes outlier values (e.g. cloudy pixels) based on NDVI. 
 
-  * Inputs: Layer-stack of Landsat-derived surface albedo rasters (GeoTIFF, .tif) from IDL/step2_layerstack_images.pro.
+   * Inputs: Layer-stack of Landsat-derived surface albedo rasters (GeoTIFF, .tif) from IDL/step2_layerstack_images.pro.
   
-  * Outputs: Smoothed and filtered layer-stack of Landsat-derived surface albedo rasters (GeoTIFF, .tif).
+   * Outputs: Smoothed and filtered layer-stack of Landsat-derived surface albedo rasters (GeoTIFF, .tif).
  
 * **IDL/generate_albedo_datasets_for_analysis.pro**: This script summarizes the albedo timeseries over the winter and summer seasons by calculating the mean winter (DOY 1 - 121) albedo and mean summer (DOY 182 – 243) albedo of images collected during those respective date spans. 
 
-  * Inputs: Smoothed and filtered layer-stack of Landsat-derived surface albedo rasters (GeoTIFF, .tif) from IDL/step3_time_series_smooth.pro.
+   * Inputs: Smoothed and filtered layer-stack of Landsat-derived surface albedo rasters (GeoTIFF, .tif) from IDL/step3_time_series_smooth.pro.
   
-  * Outputs: Two raster images summarizing the mean winter surface albedo and mean summer surface albedo across the Council, AK site (GeoTIFF, .tif).
+   * Outputs: Two raster images summarizing the mean winter surface albedo and mean summer surface albedo across the Council, AK site (GeoTIFF, .tif).
 
  * **IDL/albedo_image_statistics.pro**: This script combines the seasonal albedo data with third-party plant functional type and topographic data into a single tabular data file for further analyses in R. 
 
