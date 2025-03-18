@@ -91,11 +91,58 @@ IDL Subdirectory:
  
 R Subdirectory:
  
-* **R/make_pcc_figure.pro**: This script generates a quick correlation plot to visualize the correlations between vegetation, topography, and albedo variables. 
+* **R/make_pcc_figure.R**: This script generates a quick correlation plot to visualize the correlations between vegetation, topography, and albedo variables. 
 
    * Inputs: Tabular file (.csv) of variables similar to that produced by IDL/albedo_image_statistics.pro.
   
-   * Outputs: No data outputs saved. A correlation plot figure is saved that was used to check correlations within the data, but this figure is not presented in the final version of the Shuman et al. (in prep) manuscript. 
+   * Outputs: No data outputs saved. A correlation plot figure is saved that was used to check correlations within the data, but this figure is not presented in the final version of the Shuman et al. (in prep) manuscript.
+
+* **R/breakpoint_regression.R**: This script uses breakpoint regression to calculate the DOY on which each pixel in the Council, AK site begins and ends the transition from a "winter albedo regime" (i.e. dominated by high albedo snow) to a "summer albedo regime" (i.e. dominated by low albedo leafy vegetation). 
+
+   * Inputs: Time series layer-stack of white-sky albedo raster images from IDL/step3_time_series_smooth.pro.
+  
+   * Outputs: A raster image representing the completion DOY for the spring albedo transition (second breakpoint) for each pixel across the Council, AK site (GeoTIFF, .tif). Low-light conditions and frequent cloud cover during early spring created significant uncertainty in the identification of the first breakpoint, so while it is calculated in this script, it is not used in the subsequent analyses of Shuman et al. (in prep).
+ 
+**R/calculate_twi.R**: This script calculates the topographic wetness index (twi) by modifying the "whitebox" R package. TWI is used as a proxy for moisture when predicting surface albeodo in Shuman et a. (in prep).
+
+   * Inputs: 30 meter DEM raster image clipped to the Council, AK site; from Singhania et al. (2022) (GeoTIFF, .tif)
+  
+   * Outputs: 30 meter DEM raster image clipped to the Council, AK site (GeoTIFF, .tif) 
+
+* **R/Fig1_script.R**: This script loads and re-processes the vegetation, topography, and albedo data to optimize it for analyses in the R environment, and also generates the plots used in Figure 1 of Shuman et al. (in prep). Re-processing includes bi-linear resampling to make sure all data sources are exactly the same extent and resoltion, as well as identifying all 30 meter pixels which contain >75% fractional cover for a single PFT (i.e. are dominated by one PFT).   
+
+   * Inputs: Tabular file (.csv) of variables similar to that produced by IDL/albedo_image_statistics.pro.
+  
+   * Outputs:
+     * An .RData object containing a dataframe with all variables analyzed in Shuman et al. (in prep), including for each 30m pixel:
+       * X coordinate
+       * Y coordinate
+       * Canopy Height (m)
+       * Elevation (m)
+       * Topographic Position Index
+       * Terrain Ruggedness Index
+       * Slope (degrees)
+       * Aspect (degrees)
+       * Topographic Wetness Index
+       * Mean summer albedo
+       * Mean winter albedo
+       * Evergreen tree fractional cover (%)
+       * Alder fractional cover (%)
+       * Willow fractional cover (%)
+       * Other deciduous tall tree fractional cover (%)
+       * Low shrub fractional cover (%)
+       * Dwarf shrub fractional cover (%)
+       * Evergreen shrub fractional cover (%)
+       * Forb fractional cover (%)
+       * Dry graminoid fractional cover (%)
+       * Wet graminoid fractional cover (%)
+       * Moss fractional cover (%)
+       * Lichen fractional cover (%)
+       * Non-photosynthetic vegetation fractional cover (%)
+       * PFT with highest fractional cover in pixel
+       * Start date of spring albedo transition (DOY)
+       * End date of spring albedo transition (DOY)
+     * Plots representing panels (A), (B), and (C) of Figure 1 in Shuman et al. (in prep) depicting the location of the Council, AK site (A), the PFT with the highest fractional cover for each pixel across the site (B), and the variation in winter albedo across the site (C).  
   
 
   
