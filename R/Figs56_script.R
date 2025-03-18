@@ -1,6 +1,6 @@
 ###########################################################################################
 #
-#        This script runs the random forest model to create the VIP and PDP figures (Figures 5 and 6 in Shuman et al.)
+#        This script runs the random forest model to create the VIP and PDP figures (Figures 5-6 and S6-S7 in Shuman et al.)
 #
 #    --- Last updated:  2025.02.06 By Ian Shuman <ins2109@columbia.edu>
 ###########################################################################################
