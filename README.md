@@ -103,7 +103,7 @@ R Subdirectory:
   
    * Outputs: A raster image representing the completion DOY for the spring albedo transition (second breakpoint) for each pixel across the Council, AK site (GeoTIFF, .tif). Low-light conditions and frequent cloud cover during early spring created significant uncertainty in the identification of the first breakpoint, so while it is calculated in this script, it is not used in the subsequent analyses of Shuman et al. (in prep).
  
-**R/calculate_twi.R**: This script calculates the topographic wetness index (twi) by modifying the "whitebox" R package. TWI is used as a proxy for moisture when predicting surface albeodo in Shuman et a. (in prep).
+* **R/calculate_twi.R**: This script calculates the topographic wetness index (twi) by modifying the "whitebox" R package. TWI is used as a proxy for moisture when predicting surface albeodo in Shuman et a. (in prep).
 
    * Inputs: 30 meter DEM raster image clipped to the Council, AK site; from Singhania et al. (2022) (GeoTIFF, .tif)
   
