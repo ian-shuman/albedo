@@ -55,7 +55,10 @@ breakpoints[breakpoints > 213] <- NA
 breakpoints1[breakpoints1 < 92] <- NA
 
 
-#Resample so that fCover sums to unity
+##All data have already been upscaled to a common 30m resolution in IDL. However, there are still
+#very small differences in the extent and resolution (at the cm order of magnitide) of the products, 
+#so we will resample again using bilinear interpolation. We will use fcover as the template
+#because fcover values for all PFTs must necessarily sum to 1, which may not be true if resampled. 
 chm.resamp <- resample(canopy_height_model, fcover)
 topo.resamp <- resample(topo, fcover)
 tpi.resamp <- resample(tpi, fcover)
@@ -71,6 +74,19 @@ stack <- c(chm.resamp, topo.resamp, tpi.resamp, tri.resamp, slope.resamp, aspect
 stack_df <- as.data.frame(stack, xy = TRUE)
 colnames(stack_df) <- c("x", "y" , "council_watershed_chm_30m", "council_watershed_topo_30m", "council_watershed_tpi_30m" , "council_watershed_tri_30m", "council_watershed_slope_30m", "council_watershed_aspect_30m", "twi", "council_watershed_albedo_summer", "council_watershed_albedo_winter", "Spruce_fcover", "Alder_fcover" , "Willow_fcover", "OtherTall_fcover" , "LowShrubs_fcover", "DwarfShrubs_fcover", "EvergreenShrubs_fcover", "Forb_fcover" , "DryGrass_fcover", "WetGrass_fcover", "Moss_fcover", "Lichen_fcover", "NPV_fcover", "category", "break_point1_30m", "break_point_30m")
 #save(stack_df, file = "stack_df.RData")
+
+#Check to ensure that physical laws are not broken after resampling
+max(stack_df$council_watershed_albedo_winter, na.rm = T) <= 1 & 
+  max(stack_df$council_watershed_albedo_summer, na.rm = T) <= 1 & 
+  min(stack_df$council_watershed_albedo_winter, na.rm = T) >= 0 & 
+  min(stack_df$council_watershed_albedo_summer, na.rm = T) >= 0 & 
+  max(stack_df$council_watershed_slope_30m, na.rm = T) <= 90 &
+  min(stack_df$council_watershed_slope_30m, na.rm = T) >= 0 &
+  max(stack_df$council_watershed_aspect_30m, na.rm = T) <= 360 &
+  min(stack_df$council_watershed_aspect_30m, na.rm = T) >= 0 &
+  min(stack_df$council_watershed_chm_30m, na.rm = T) >= 0
+
+save(stack_df, file = "stack_df.RData")
 
 
 #Filter Categories for >75% fCover, use only for figures 2 and 3
