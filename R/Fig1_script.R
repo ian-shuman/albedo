@@ -43,7 +43,7 @@ canopy_height_model <- rast('council_watershed_chm_30m.tif') #4
 canopy_height_model[canopy_height_model < 0] <- NA #there are about 6000 negative values which I think should be removed
 aspect <- rast('council_watershed_aspect_30m.tif') #2
 slope <- rast('council_watershed_slope_30m.tif') #2
-topo <- rast('council_watershed_topo_30m.tif') #what is this #2
+topo <- rast('council_watershed_topo_30m.tif') #2
 tpi <- rast('council_watershed_tpi_30m.tif')  #2 #topographic position index, positive values mean the cell is higher than its surrounding cells, negative mean it is lower
 tri <- rast('council_watershed_tri_30m.tif') #terrain ruggedness index, higher values mean more heterogeneity in the surrounding cells #2
 fcover <- rast('~/Downloads/albedo/Data/council_watershed_fcover_30m.dat') #3
