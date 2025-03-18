@@ -126,19 +126,19 @@ R Subdirectory:
        * Topographic Wetness Index
        * Mean summer albedo
        * Mean winter albedo
-       * Evergreen tree fractional cover (%)
-       * Alder fractional cover (%)
-       * Willow fractional cover (%)
-       * Other deciduous tall tree fractional cover (%)
-       * Low shrub fractional cover (%)
-       * Dwarf shrub fractional cover (%)
-       * Evergreen shrub fractional cover (%)
-       * Forb fractional cover (%)
-       * Dry graminoid fractional cover (%)
-       * Wet graminoid fractional cover (%)
-       * Moss fractional cover (%)
-       * Lichen fractional cover (%)
-       * Non-photosynthetic vegetation fractional cover (%)
+       * Evergreen tree fractional cover 
+       * Alder fractional cover 
+       * Willow fractional cover 
+       * Other deciduous tall tree fractional cover 
+       * Low shrub fractional cover 
+       * Dwarf shrub fractional cover 
+       * Evergreen shrub fractional cover 
+       * Forb fractional cover 
+       * Dry graminoid fractional cover 
+       * Wet graminoid fractional cover 
+       * Moss fractional cover 
+       * Lichen fractional cover 
+       * Non-photosynthetic vegetation fractional cover
        * PFT with highest fractional cover in pixel
        * Start date of spring albedo transition (DOY)
        * End date of spring albedo transition (DOY)
