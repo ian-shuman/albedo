@@ -161,13 +161,19 @@ R Subdirectory:
      * Raster image of canopy height clipped to the Council, AK site (30 m resolution); from processing Singhania et al. (2022) (GeoTIFF, .tif)
      * 30 meter resolution raster image of the breakpoint regression identified date of completion for the spring albedo transition across the Council, AK site (30 m resolution); from R/breakpoint_regression.R (GeoTIFF, .tif)
   
-   * Outputs: No data outputs saved. All panels represented in Figure 3 in Shuman et al. (in prep) are plotted but not saved.
+   * Outputs: No data outputs saved. All panels represented in Figure 3 in Shuman et al. (in prep) are plotted but not explicitly saved.
  
  * **R/Fig4_script.R**: This script plots variation in the completion date of the spring albedo transition (calculated in R/breakpoint_regression.R) by dominant PFT (>75% fractional cover) and by canopy height (in 1 m bins). Significance tests are conduced on the differences in transition completion DOY between dominant PFTs, and the fractional composition of dominant PFTs is calculated for each canopy height bin. These analyses are then used to create Figure 4 in Shuman et al. (in prep).    
 
    * Inputs: Data frame which is the output of R/Fig1_script.R. Alternatively, 30 meter raster images (GeoTIFF, .tif) of mean summer albedo, mean winter albedo, canopy height, aspect, slope, DEM, TPI, TRI, fractional cover of each PFT, dominant PFT at a pixel, TWI, and the first and second (optional) DOY breakpoints of the spring albedo transition which are generated as outputs in the scripts above can be used as inputs to generate a nearly identical dataframe in this script. 
 
    * Outputs: No data outputs saved. All plots representing Figure 4 in Shuman et al. (in prep) are saved to a user-specified directory.
+
+ * **R/Fig56_script.R**: This script uses a random forest model to predict winter and summer surface albedo from the vegetation composition, vegetation structure, topography, and moisture variables. The output of the random forest model is analyzed for variable importance, partial least squares regression (PLSR) is used to determine the goodness of fit for the random forest models, and partial dependence plots are created for each predictor variable. The variable importance analyses are used to create Figure 5, the PLSR check are used to create Figure S6, and the partial dependence plots are used to creat Figures 6 and S7 in Shuman et al. (in prep).
+
+   * Inputs: Data frame which is the output of R/Fig1_script.R. 
+
+   * Outputs: No data outputs saved. All panels represented in Figures 5-6 and S6-S7 in Shuman et al. (in prep) are plotted but not explicitly saved. We recommend saving the workspace image of the R environment to avoid re-running this computationally intensive script. 
   
 # Third-Party Data Availability
 
