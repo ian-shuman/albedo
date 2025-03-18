@@ -215,94 +215,28 @@ This repository is primarily built in the R environment using R version 4.4.0.
     
 * **utils.R**: This script contains utility functions for the code. Specifically, there is a function for manually calculating the Gelman Rubin diagnostic for assessing chain convergence because our output is not in the proper format to use the default functions available in R. I additionally removed any identical chains (usually 2/4) from the output prior to calculating the diagnostic statistic. The identical chains are an artifact of the gjam function and cannot be avoided to the authors' knowledge. Removing the identical chains offers a more conservative view of chain convergence.
   
-# Input data
+# Third-Party Data Availability
 
-## xdata
+## Landsat Surface Albedo Timeseries
 
-* 15 in-sample and 7 out-of-sample CSVs. Each CSV contains point-level (corner) data for one management area
-  * GJAMDATA/X/IL_Mixed1_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/X/IL_Prairie1_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/X/IL_Prairie2_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/X/IL_Prairie3_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/X/IL_River2_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/X/IL_Shawnee_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/X/IL_Small1_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/X/IL_Small3_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/X/IL_StudyArea_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/X/IN_Dunes_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/X/IN_Forest1_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/X/IN_Forest2_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/X/IN_HoosierNorth_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/X/IN_HoosierSouth_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/X/IN_NE_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/Withheld for Validation/X/IL_Forest1_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/Withheld for Validation/X/IL_River1_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/Withheld for Validation/X/IL_Small2_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/Withheld for Validation/X/IN_Forest3_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/Withheld for Validation/X/IN_Forest4_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/Withheld for Validation/X/IN_Indianapolis_X_Ian10mDataStructure_RandomEffects_Fixed.csv
-  * GJAMDATA/Withheld for Validation/X/IN_Prairie1_X_Ian10mDataStructure_RandomEffects_Fixed.csv
+* Main article:
+  * Erb, A. M., Li, Z., Sun, Q., Paynter, I., Wang, Z., & Schaaf, C. (2022). Evaluation of the Landsat-8 Albedo Product across the Circumpolar Domain. Remote Sensing, 14(21), 5320. https://doi.org/10.3390/rs14215320
 
-* Dimensions:
-  * Rows correspond to individual corners in the PLS dataset. Each CSV has a different number of rows corresponding to the size of the management area
-  * Columns are as follows:
-    * uniqueID: an identifier for each corner within a given dataframe. When binded together, the uniqueID must be combined with the management area to get a unique corner identifier across management areas
-    * x: easting (m)
-    * y: northing (m)
-    * long: longitude (decimal degrees, EPSG:4326)
-    * lat: latitude (decimal degrees, EPSG:4326)
-    * Slope: topographic slope (m)
-    * Aspect: topographic aspect (degrees). NA indicates slope of 0, when aspect cannot be calculated
-    * CAC: soil CaCO3 concentration (%)
-    * CEC: cation exchange capacity (meq/100g)
-    * CLA: soil clay content (%)
-    * SAN: soil sand content (%)
-    * SIL: soil silt content (%)
-    * WAT: soil available water content (cm)
-    * mean.SWI: SAGA Wetness Index (unit area/radian)
-    * Hydric: presence or absence of hydric soils (1/0 binary)
-    * Floodplain: presence or absence of floodplain (1/0 binary)
-    * totalPPT: mean total annual precipitation (mm)
-    * MeanTEMP: mean annual temperature (deg F)
-    * direction: cardinal direction of aspect. Simplification of aspect to improve use of aspect with the high number of points with aspect NA because slope = 0 (N = north, S = south, E = east, W = west, NS = no slope)
+* More details:
+  * Li, Z., Erb, A., Sun, Q., Liu, Y., Shuai, Y., Wang, Z., Boucher, P., & Schaaf, C. (2018). Preliminary assessment of 20-m surface albedo retrievals from sentinel-2A surface reflectance and MODIS/VIIRS surface anisotropy measures. Remote Sensing of Environment, 217, 352–365. https://doi.org/10.1016/j.rse.2018.08.025
+  * Wang, Z., Erb, A. M., Schaaf, C. B., Sun, Q., Liu, Y., Yang, Y., Shuai, Y., Casey, K. A., & Román, M. O. (2016). Early spring post-fire snow albedo dynamics in high latitude boreal forests using Landsat-8 OLI data. Remote Sensing of Environment, 185, 71–83. https://doi.org/10.1016/j.rse.2016.02.059
+  * Shuai, Y., Masek, J. G., Gao, F., & Schaaf, C. B. (2011). An algorithm for the retrieval of 30-m snow-free albedo from Landsat surface reflectance and MODIS BRDF. Remote Sensing of Environment, 115(9), 2204–2216. https://doi.org/10.1016/j.rse.2011.04.019
     
-## ydata
+## Plant Functional Type Fractional Cover
 
-* 15 in-sample and 7 out-of-sample CSVs corresponding to the xdata files. Each file contains point-level vegetation data
-  * GJAMDATA/Y/IL_Mixed1_Y_DataStructure.csv
-  * GJAMDATA/Y/IL_Prairie2_Y_DataStructure.csv
-  * GJAMDATA/Y/IL_River2_Y_DataStructure.csv
-  * GJAMDATA/Y/IL_Small1_Y_DataStructure.csv
-  * GJAMDATA/Y/IL_StudyArea_Y_DataStructure.csv
-  * GJAMDATA/Y/IN_Forest1_Y_DataStructure.csv
-  * GJAMDATA/Y/IN_HoosierNorth_Y_DataStructure.csv
-  * GJAMDATA/Y/IN_NE_Y_DataStructure.csv
-  * GJAMDATA/Y/IL_Prairie1_Y_DataStructure.csv
-  * GJAMDATA/Y/IL_Prairie3_Y_DataStructure.csv
-  * GJAMDATA/Y/IL_Shawnee_Y_DataStructure.csv
-  * GJAMDATA/Y/IL_Small3_Y_DataStructure.csv
-  * GJAMDATA/Y/IN_Dunes_Y_DataStructure.csv
-  * GJAMDATA/Y/IN_Forest2_Y_DataStructure.csv
-  * GJAMDATA/Y/IN_HoosierSouth_Y_DataStructure.csv
-  * GJAMDATA/Withheld for Validation/Y/IL_Forest1_Y_DataStructure.csv
-  * GJAMDATA/Withheld for Validation/Y/IL_Small2_Y_DataStructure.csv
-  * GJAMDATA/Withheld for Validation/Y/IN_Forest4_Y_DataStructure.csv
-  * GJAMDATA/Withheld for Validation/Y/IN_Prairie1_Y_DataStructure.csv
-  * GJAMDATA/Withheld for Validation/Y/IL_River1_Y_DataStructure.csv
-  * GJAMDATA/Withheld for Validation/Y/IN_Forest3_Y_DataStructure.csv
-  * GJAMDATA/Withheld for Validation/Y/IN_Indianapolis_Y_DataStructure.csv
+* Raw data:
+  * Yang D; Serbin S (2024): Maps of plant functional type (PFT), PFT fractional cover, and uncertainty derived from AVIRIS-NG data, 2019, Seward Peninsula. Next-Generation Ecosystem Experiments (NGEE) Arctic, ESS-DIVE repository. Dataset. doi:10.15485/2441506 accessed via https://data.ess-dive.lbl.gov/datasets/doi:10.15485/2441506 on 2025-03-18
   
-* Dimensions:
-  * Rows correspond to individual corners in the PLS dataset. Each CSV has a different number of rows corresponding to the size of the management area
-  * Columns are as follows:
-    * uniqueID: an identifier for each corner within a given dataframe. When binded together, the uniqueID must be combined with the management area to get a unique corner identifier across management areas
-    * chainstree, chainstree2, chainstree3, chainstree4: distance of each tree at a given corner to the corner. There can be between 1 and 4 trees at a given corner, so chainstree2-chainstree4 can be NA. Units are chains. Currently not used in the analysis
-    * No.tree, Oak, Elm, Hickory, Ash, Unknown.tree, Poplar, Maple, Sycamore, Other.hardwood, Mulberry, Basswood, Walnut, Cherry, Locust, No.data, Hackberry, Willow, Buckeye, Birch, Black.gum.sweet.gum, Water, Sweet.gum, Black.gum, Ironwood, Poplar.tulip.poplar, Beech, Dogwood, Wet, NA.: Columns indicating the presence or absence of each taxon/group at each corner (1/0 presence/absence). Columns that are not specific to a taxonomic group are as follows:
-      * No.tree: indicates no tree was present within a given distance of the corner
-      * Unknown.tree: the surveyor's notes were impossible to read to determine the tree taxon present at the site. Removed during data processing
-      * No.data: No data available at a given corner. Removed during data processing
-      * Water: The corner is within a body of water. Removed during data processing
-      * Wet: The corner is in a wetland area. Removed during data processing
-      * NA: Miscellaneous column removed during data processing
-    * No.tree_dist, Oak_dist, Elm_dist, Hickory_dist, Ash_dist, Unknown.tree_dist, Poplar_dist, Maple_dist, Sycamore_dist, Other.hardwood_dist, Mulberry_dist, Basswood_dist, Walnut_dist, Cherry_dist, Locust_dist: distances (in chains) of the recorded tree of each taxon to the corner. Currently not used in the analysis
+* More details:
+  * Yang, D., Morrison, B. D., Hanston, W., McMahon, A., Baskaran, L., Hayes, D. J., Miller, C. E., & Serbin, S. P. (2023). Integrating very-high-resolution UAS data and airborne imaging spectroscopy to map the fractional composition of Arctic plant functional types in Western Alaska. Remote Sensing of Environment, 286, 113430. https://doi.org/10.1016/j.rse.2022.113430
+ 
+## Topography and Canopy Height
+
+* Raw data:
+  * Singhania A; Glennie C; Fernandez-Diaz J; Hauser D (2023): National Center for Airborne Laser Mapping (NCALM) LiDAR, Imagery, and DEM data from five NGEE Arctic Sites, Seward Peninsula, Alaska, August 2021. Next-Generation Ecosystem Experiments (NGEE) Arctic, ESS-DIVE repository. Dataset. doi:10.5440/1832016 accessed via https://data.ess-dive.lbl.gov/datasets/doi:10.5440/1832016 on 2025-03-18
     
