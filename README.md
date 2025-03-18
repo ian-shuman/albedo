@@ -74,16 +74,16 @@ This repository is primarily built in the R environment using R version 4.4.0.
   
    * Outputs: Two raster images summarizing the mean winter surface albedo and mean summer surface albedo across the Council, AK site (GeoTIFF, .tif).
 
- * **IDL/albedo_image_statistics.pro**: This script combines the seasonal albedo data with third-party plant functional type and topographic data into a single tabular data file for further analyses in R. 
+* **IDL/albedo_image_statistics.pro**: This script combines the seasonal albedo data with third-party plant functional type and topographic data into a single tabular data file for further analyses in R. 
 
-  * Inputs:
-   * Mean summer albedo raster from IDL/generate_albedo_datasets_for_analysis.pro (GeoTIFF, .tif)
-   * Mean winter albedo raster from IDL/generate_albedo_datasets_for_analysis.pro (GeoTIFF, .tif)
-   * 30 meter resolution plant functional type (PFT) fractional cover raster clipped to the Council, AK site; from Yang et al. (2024) (GeoTIFF, .tif)
-   * 30 meter resolution topography rasters clipped to the Council, AK site; from Singhania et al. (2022) (GeoTIFF, .tif); includes the LiDAR collected digital elevation model (DEM), slope, aspect, and hillslope
-   * **Optional** raster file describing the transition date from winter to summer albedo based on breakpoint regression; see R/breakpoint_regression for calculation
+   * Inputs:
+    * Mean summer albedo raster from IDL/generate_albedo_datasets_for_analysis.pro (GeoTIFF, .tif)
+    * Mean winter albedo raster from IDL/generate_albedo_datasets_for_analysis.pro (GeoTIFF, .tif)
+    * 30 meter resolution plant functional type (PFT) fractional cover raster clipped to the Council, AK site; from Yang et al. (2024) (GeoTIFF, .tif)
+    * 30 meter resolution topography rasters clipped to the Council, AK site; from Singhania et al. (2022) (GeoTIFF, .tif); includes the LiDAR collected digital elevation model (DEM), slope, aspect, and hillslope
+    * **Optional** raster file describing the transition date from winter to summer albedo based on breakpoint regression; see R/breakpoint_regression for calculation
   
-  * Outputs: Single tabular file (.csv) summarizing mean summer albedo, mean winter albedo, DEM, slope, aspect, hillslope, and transition date at 30 meter spatial resolution across the Council, AK site
+   * Outputs: Single tabular file (.csv) summarizing mean summer albedo, mean winter albedo, DEM, slope, aspect, hillslope, and transition date at 30 meter spatial resolution across the Council, AK site
   
 
   
