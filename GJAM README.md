@@ -1,6 +1,6 @@
 # Overview
 
-This repository contains code written by AM Willson and I Shuman for Shuman et al. (in prep). The code uses GJAM to investigate the vegetation-environment relationship during the period of European settlement in the U.S. Midwest, as documented via the Public Land Surveys of the 19th century.
+This repository contains code written by I Shuman and D Yang for Shuman et al. (in prep). The code processes a Landsat-derived albedo product developed by Erb et al. (2022) to create a high resolution time series of broadband white sky albedo across a 33 square kilometer site near Council, AK on the Seward Peninsula. Additional code analyzes the timeseries to determine how fine scale plant functional type fractional cover and canopy height affects spatiotemporal variation in surface albedo and implements a random forest model to determine the importance of vegetation characteristics relative to topography when predicting surface albedo. 
 
 # License
 
@@ -8,27 +8,37 @@ This repository holds an MIT License, as described in the LICENSE file.
 
 # Software versions
 
-This repository is entirely built in the R environment using R version 4.3.1.
+This repository is primarily built in the R environment using R version 4.4.0.
 
 # Package versions
-
-* `corrplot` v. 0.92
-* `cowplot` v. 1.1.1
-* `dplyr` v. 1.1.3
-* `fields` v. 14.1
-* `ggplot2` v. 3.4.4
-* `gjam` v. 2.6.2
-* `lme4` v. 1.1.34
-* `maps` v. 3.4.1
-* `piecewiseSEM` v. 2.3.0
-* `sf` v. 1.0.14
-* `sfheaders` v. 0.4.3
-* `stats` v. 4.3.1
-* `stringr` v. 1.5.0
-* `tibble` v. 3.2.1
-* `tidyr` v. 1.3.0
-* `utils` v 4.3.1
-* `virids` v. 0.6.3
+* `caTools` v. 1.18.2
+* `cowplot` v. 1.1.3
+* `dplyr` v. 1.1.4
+* `ggbreak` v. 0.1.2
+* `ggfun` v. 0.1.5
+* `ggpattern` v. 1.1.1
+* `ggplot2` v. 3.5.1
+* `ggpmisc` v. 0.5.5
+* `GMCM` v. 1.4
+* `grid` v. 4.4.0
+* `gtable` v. 0.3.5
+* `haven` v. 2.5.4
+* `multcompView` v. 0.1.10
+* `pdp` v. 0.8.1
+* `pls` v. 2.8.3
+* `quantreg` v. 5.98
+* `randomForest` v. 4.7.1.1
+* `raster` v. 3.6.26
+* `readr` v. 2.1.5
+* `reshape2` v. 1.4.4
+* `scatterpie` v. 0.2.3
+* `spatialEco` v. 2.0.2
+* `spectratrait` v. 1.2.1
+* `terra` v. 1.7.78
+* `tidyr` v. 1.3.1
+* `tidyverse` v. 2.0.0 
+* `viridis` v. 0.6.5
+* `viridisLite` v. 0.4.2
 
 # Directory structure
 
