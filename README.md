@@ -44,11 +44,15 @@ This repository is primarily built in the R environment using R version 4.4.0.
 # Directory structure
 
 * IDL: The IDL subdirectory contains IDL code developed by D Yang for processing Erb et al.'s (2022) surface albedo product for use in the analyses of Shuman et al. (in prep). Description of each file is provided in the following subsection, scripts should be run in the order presented there. 
-* R: The bulk of the repository is housed in the R subdirectory. These are the scripts used for analyzing the surface albedo product with respect to vegetation characteristics and topography. The scripts within the R subdirectory are ordered according to the figures presented in Shuman et al. (in prep). Descriptions of each figure's script are presented in the following subsection, and scripts should be run in squential order (i.e. 1 > 2 > 3 > 4 > 56).
+* R: The bulk of the repository is housed in the R subdirectory. These are the scripts used for analyzing the surface albedo product with respect to vegetation characteristics and topography. The scripts within the R subdirectory are ordered according to the figures presented in Shuman et al. (in prep). Descriptions of each figure's script are presented in the following subsection, and scripts should be run in the order presented there.
   * deprecated: Contains old versions of code presented in the figure scripts with preliminary or additional analyses that are not presented in Shuman et al. (in prep). These scripts are for the authors' reference only.
 * ROI: Contains the region of interest (ROI) used to define the 33.7 square kilometer site near Council, AK. Three file formats (.tif, .enp, and .hdr) are provided.
 
 ## Code organization
+
+To fully replicate the analyses used in Shuman et al. (in prep), code should be run in the order shown here.
+
+IDL Subdirectory:
 
 * **IDL/step1_landsat_clip.pro**: This script clips Landsat surface reflectance images to the Council, AK site using shapefiles. 
 
@@ -84,6 +88,14 @@ This repository is primarily built in the R environment using R version 4.4.0.
      * **Optional** raster file describing the transition date from winter to summer albedo based on breakpoint regression; see R/breakpoint_regression for calculation
   
    * Outputs: Single tabular file (.csv) summarizing mean summer albedo, mean winter albedo, DEM, slope, aspect, hillslope, and transition date at 30 meter spatial resolution across the Council, AK site
+ 
+R Subdirectory:
+ 
+* **R/make_pcc_figure.pro**: This script generates a quick correlation plot to visualize the correlations between vegetation, topography, and albedo variables. 
+
+   * Inputs: Tabular file (.csv) of variables similar to that produced by IDL/albedo_image_statistics.pro.
+  
+   * Outputs: No data outputs saved. A correlation plot figure is saved that was used to check correlations within the data, but this figure is not presented in the final version of the Shuman et al. (in prep) manuscript. 
   
 
   
