@@ -1,6 +1,6 @@
 ###########################################################################################
 #
-#        This script recreates figure 3 in Shuman et al.
+#        This script recreates figure 4 in Shuman et al.
 #
 #    --- Last updated:  2025.03.08 By Ian Shuman <ins2109@columbia.edu>
 ###########################################################################################
