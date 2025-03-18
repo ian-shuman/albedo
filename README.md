@@ -31,7 +31,10 @@ This repository is primarily built in the R environment using R version 4.4.0.
 * `raster` v. 3.6.26
 * `readr` v. 2.1.5
 * `reshape2` v. 1.4.4
+* `rnaturalearth` v.1.0.1
+* `rnaturalearthdata` v. 1.0.0
 * `scatterpie` v. 0.2.3
+* `sf` v. 1.0.16
 * `spatialEco` v. 2.0.2
 * `spectratrait` v. 1.2.1
 * `strucchange` v. 1.5.3
@@ -109,7 +112,7 @@ R Subdirectory:
   
    * Outputs: 30 meter DEM raster image clipped to the Council, AK site (GeoTIFF, .tif) 
 
-* **R/Fig1_script.R**: This script loads and re-processes the vegetation, topography, and albedo data to optimize it for analyses in the R environment, and also generates the plots used in Figure 1 of Shuman et al. (in prep). Re-processing includes bi-linear resampling to make sure all data sources are exactly the same extent and resoltion, as well as identifying all 30 meter pixels which contain >75% fractional cover for a single PFT (i.e. are dominated by one PFT).   
+* **R/Fig1_script.R**: This script loads and re-processes the vegetation, topography, and albedo data to optimize it for random forest implementation in the R environment, and also generates the plots used in Figure 1 of Shuman et al. (in prep). Re-processing includes bi-linear resampling to make sure all data sources are exactly the same extent and resoltion, as well as identifying all 30 meter pixels which contain >75% fractional cover for a single PFT (i.e. are dominated by one PFT).   
 
    * Inputs: Tabular file (.csv) of variables similar to that produced by IDL/albedo_image_statistics.pro.
   
@@ -144,7 +147,27 @@ R Subdirectory:
        * End date of spring albedo transition (DOY)
      * Plots representing panels (A), (B), and (C) of Figure 1 in Shuman et al. (in prep) depicting the location of the Council, AK site (A), the PFT with the highest fractional cover for each pixel across the site (B), and the variation in winter albedo across the site (C).  
   
+* **RFig2_script.R**: This script analyzes variation in summer and winter albedo versus multiple formulations of plant functional type and canopy height and uses that information to create Figures 2 and S1-S5 from Shuman et al. (in prep). Significance tests comparing seasonal albedo between pixels dominated by different PFTs and by different 1 meter bins of canopy height are conducted, but are not presented in Shuman et al. (in prep). 
 
+   * Inputs: Tabular file (.csv) of variables similar to that produced by IDL/albedo_image_statistics.pro. The file is reprocessed in this script, the .RData file developed in R/Fig1_script.R is not used here. 
+  
+   * Outputs: No data outputs saved. All plots representing Figures 2 and S1-S5 in Shuman et al. (in prep) are saved to a user-specified directory.
+ 
+* **RFig3_script.R**: This script visualizes the surface albedo time series by dominant PFT (>75% fractional cover) and canopy height (binned in 1 meter increments) using a 15 day moving-window average. These visualizations are used to create Figure 3 in Shuman et al., (in prep). 
+
+   * Inputs:
+     * Smoothed and filtered layer-stack of Landsat-derived surface albedo rasters (30 m resolution); from IDL/step3_time_series_smooth.pro (.dat) 
+     * Plant functional type (PFT) fractional cover map clipped to the Council, AK site (30 m resolution); from Yang et al. (2024) (.dat)
+     * Raster image of canopy height clipped to the Council, AK site (30 m resolution); from processing Singhania et al. (2022) (GeoTIFF, .tif)
+     * 30 meter resolution raster image of the breakpoint regression identified date of completion for the spring albedo transition across the Council, AK site (30 m resolution); from R/breakpoint_regression.R (GeoTIFF, .tif)
+  
+   * Outputs: No data outputs saved. All panels represented in Figure 3 in Shuman et al. (in prep) are plotted but not saved.
+ 
+ * **RFig4_script.R**: This script plots variation in the completion date of the spring albedo transition (calculated in R/breakpoint_regression.R) by dominant PFT (>75% fractional cover) and by canopy height (in 1 m bins). Significance tests are conduced on the differences in transition completion DOY between dominant PFTs, and the fractional composition of dominant PFTs is calculated for each canopy height bin. These analyses are then used to create Figure 4 in Shuman et al. (in prep).    
+
+   * Inputs: Data frame which is the output of R/Fig1_script.R. Alternatively, 30 meter raster images (GeoTIFF, .tif) of mean summer albedo, mean winter albedo, canopy height, aspect, slope, DEM, TPI, TRI, fractional cover of each PFT, dominant PFT at a pixel, TWI, and the first and second (optional) DOY breakpoints of the spring albedo transition which are generated as outputs in the scripts above can be used as inputs to generate a nearly identical dataframe in this script. 
+
+   * Outputs: No data outputs saved. All plots representing Figure 4 in Shuman et al. (in prep) are saved to a user-specified directory.
   
 # Third-Party Data Availability
 
