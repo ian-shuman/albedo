@@ -42,27 +42,9 @@ This repository is primarily built in the R environment using R version 4.4.0.
 
 # Directory structure
 
-* GJAMDATA: **Data** and **intermediate outputs** from processing steps required to run the analysis code are available here. Data are separated from intermediate outputs because data are always contained within subdirectories named "X" and "Y."
-  * In-sample data: 
-    * GJAMDATA/X
-    * GJAMDATA/Y
-  * Out-of-sample data: 
-    * GJAMDATA/Withheld for Validation/X 
-    * GJAMDATA/Withheld for Validation/Y
-  * Intermediate outputs are available here and described after the steps producing them below:
-    * GJAMDATA/processed_xydata.RData
-    * GJAMDATA/processed_xydata_2.RData
-    * GJAMDATA/processed_xydata_2_ecosystem.RData
-    * GJAMDATA/Withheld for Validation/validation_processed_xydata.RData
-    * GJAMDATA/Withheld for Validation/validation_processed_xydata_fixmarea.RData
-    * GJAMDATA/Withheld for Validation/validation_processed_xydata_fixmarea_reduced.RData
-    * GJAMDATA/Withheld for Validation/validation_processed_xydata_fixmarea_reduced_ecosystem.RData
-* out: **Outputs** of the GJAM model are available in this directory. Any data or outputs not included in the repository are available upon request at this time. Processing for the data inputs to this repository are available from the following repository:
-  * <https://github.com/ian-shuman/GJAMCovariates.git>: produces point-level reconstructions of environmental covariates
-* R: The bulk of the repository is housed in the R subdirectory. The scripts within the R subdirectory are ordered according to the sequence of steps that should be taken to recreate the analysis. Descriptions of each step are presented in the following subsection, and should be run in the order presented, except step 0 must follow step 1.
-* Review: Documents related to an code review conducted prior to submitting the associated manuscript for publication. The documents are as follows:
-  * Code Review Checklist - GJAM - AW-CK - Notre Dame Checklist.pdf: A filled out rubric pertaining to reviewing the code, workflow, and statistical methodology of the manuscript associated with this paper. The checklist was jointly written by current members of the McLachlan Lab at the University of Notre Dame as of December 2023 (Jason McLachlan, Alyssa Willson, Jody Peters, Cazimir Kowalski, Nate Kroeze, Hannah O'Grady). The "author checklist" and "author notes" sections were filled out by Alyssa Willson and the "reviewer checklist" and "reviewer notes" were filled out by Cazimir Kowalski.
-  * ck_review.Rmd: additional notes related to the code review conducted by C. Kowalski
+* IDL: The IDL subdirectory contains IDL code developed by D Yang for processing Erb et al.'s (2022) surface albedo product for use in the analyses of Shuman et al. (in prep). Description of each file is provided in the following subsection. 
+* R: The bulk of the repository is housed in the R subdirectory. These are the scripts used for analyzing the surface albedo product with respect to vegetation characteristics and topography. The scripts within the R subdirectory are ordered according to the figures presented in Shuman et al. (in prep). Descriptions of each figure's script are presented in the following subsection, and scripts should be run in squential order (i.e. 1 > 2 > 3 > 4 > 56).
+  * deprecated: Contains old versions of code presented in the figure scripts with preliminary or additional analyses that are not presented in Shuman et al. (in prep). These scripts are for the authors' reference only. 
 
 ## Code organization
 
