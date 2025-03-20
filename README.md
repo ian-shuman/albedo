@@ -176,7 +176,7 @@ R Subdirectory:
 
    * Inputs: Data frame which is the output of R/Fig1_script.R. 
 
-   * Outputs: No data outputs saved. All panels represented in Figures 5-6 and S6-S7 in Shuman et al. (in prep) are plotted but not explicitly saved. We recommend saving the workspace image of the R environment to avoid re-running this computationally intensive script. 
+   * Outputs: No data outputs saved. All panels represented in Figures 5-6 and S6-S7 in Shuman et al. (in prep) are plotted and saved to a user-specified directory. We recommend saving the workspace image of the R environment to avoid re-running this computationally intensive script. 
   
 # Third-Party Data Availability
 
