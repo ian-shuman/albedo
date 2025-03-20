@@ -1,8 +1,8 @@
 ###########################################################################################
 #
-#        This script runs the random forest model to create the VIP and PDP figures (Figures 5-6 and S6-S7 in Shuman et al.)
+#        This script runs the random forest model to create the VIP and PDP figures (Figures 5 and 6 in Shuman et al.)
 #
-#    --- Last updated:  2025.02.06 By Ian Shuman <ins2109@columbia.edu>
+#    --- Last updated:  2025.03.20 By Ian Shuman <ins2109@columbia.edu>
 ###########################################################################################
 
 #******************** close all devices and delete all variables *************************#
@@ -16,7 +16,7 @@ options(warn = -1)
 #****************************** load required libraries **********************************#
 ### install and load required R packages
 list.of.packages <- c("ggplot2", "readr", "GMCM", "reshape2", "raster", "ggpmisc", 
-                      "randomForest", "caTools", "pls", "spectratrait", "terra", "pdp", "ggbreak", "tidyr", "cowplot")
+                      "randomForest", "caTools", "pls", "spectratrait", "terra", "pdp", "ggbreak", "tidyr", "cowplot", "Metrics")
 # check for dependencies and install if needed
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages, dependencies=c("Depends", "Imports",
@@ -34,6 +34,9 @@ invisible(lapply(list.of.packages, library, character.only = TRUE))
 
 #Set wd to data directory
 setwd("~/Downloads/albedo/Data")
+
+#Set output directory to save graphs to
+outDIR <- "/Users/anncrumlish/Downloads/albedo analysis/map_stats"
 #*****************************************************************************************#
 #*
 load("stack_df.RData") #Load from the Figure 1 script
@@ -190,13 +193,6 @@ for (v in variables_of_interest){
   assign(plot.name, plot)
 }
 
-
-
-
-
-
-
-
 ######### My data summer ################
 
 
@@ -224,7 +220,6 @@ for (i in 1:100)
   imp <- importance(RF.out, type = 1)
   # store vip and coefficient values
   vips <- cbind(vips, imp)
-  
   
   
   #predict on new data
@@ -287,6 +282,45 @@ pred.summer = ggplot(data = predPLOT.s, aes(x=ref, y=pred)) +
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 pred.summer
+
+#Plot Figure 5
+bar.summer.plot <- bar.summer + xlab("Predictor Variable") 
+bar.winter.plot <- bar.winter + xlab("Predictor Variable")
+plot_grid(bar.summer.plot, bar.winter.plot, nrow = 2)
+pdfNAME = paste0(outDIR, "/", "Figure5.pdf")
+ggsave(pdfNAME, plot = last_plot(), width = 40, height = 20, units = 'cm')
+
+#Plot Figure S6
+pred.summer.plot <- pred.summer + 
+  ggtitle("Summer RF Model")+ 
+  theme(title = element_text(face = "bold", size = 22), 
+        axis.text = element_text(size = 18), 
+        axis.title = element_text(size = 20)) +
+  stat_poly_eq(formula = my.formula, 
+               aes(label = paste(..eq.label.., ..rr.label..,..p.value.label..,
+                                 sep = "*`,`~")), 
+               label.x = 1, label.y = 0.1,
+               parse = T, size = 6) 
+pred.winter.plot <- pred.winter +
+  ggtitle("Winter RF Model")+ 
+  theme(title = element_text(face = "bold", size = 22), 
+        axis.text = element_text(size = 18), 
+        axis.title = element_text(size = 20))+
+  stat_poly_eq(formula = my.formula, 
+               aes(label = paste(..eq.label.., ..rr.label..,..p.value.label..,
+                                 sep = "*`,`~")), 
+               label.x = 1, label.y = 0.1,
+               parse = T, size = 6) 
+
+plot_grid(pred.summer.plot, pred.winter.plot, nrow = 1)
+pdfNAME = paste0(outDIR, "/", "FigureS6.pdf")
+ggsave(pdfNAME, plot = last_plot(), width = 40, height = 20, units = 'cm')
+
+#Calculate RMSE
+Metrics::rmse(predPLOT.s$ref, predPLOT.s$pred) #summer RF
+Metrics::rmse(predPLOT.w$ref, predPLOT.w$pred) #winter RF
+
+
 #Make the partial dependence plots
 variables_of_interest <- c("CHM", "ET", "DG", "aspect", "TRI", "TWI")
 for (v in variables_of_interest){
@@ -316,11 +350,6 @@ for (v in variables_of_interest){
   assign(plot.name, plot)
 }
 
-
-
-library(ggbreak)
-library(ggplot2)
-library(tidyr)
 pdp.all.ET.df <- rbind(pdp.summer.ET$data, pdp.winter.ET$data)
 pdp.all.ET.df$Model <- c(rep("Summer", nrow(pdp.summer.ET$data)), rep("Winter", nrow(pdp.winter.ET$data)))
 pdp.all.ET <- ggplot(pdp.all.ET.df, aes(x = ET, y = Mean, fill = Model))+
@@ -552,28 +581,13 @@ pdpw.TRI <- ggplot(pdp.all.TRI.w, aes(x = TRI)) +
         axis.title=element_text(size=18))
 
 #plot_grid(pdp.all.CHM, pdp.all.ET, pdp.all.DG, pdp.all.aspect, pdp.all.TRI, pdp.all.TWI)
-aplot::plot_list(pdp.all.CHM, pdp.all.ET, pdp.all.DG, pdp.all.aspect, pdp.all.TRI, pdp.all.TWI, labels = c("A", "B", "C", "D", "E", "F"))
-aplot::plot_list(pdpw.CHM, pdpw.ET, pdpw.DG, pdpw.aspect, pdpw.TRI, pdpw.TWI, labels = c("A", "B", "C", "D", "E", "F"))
 
+#Plot Figure 6
+aplot::plot_list(pdpw.CHM, pdpw.ET, pdpw.DG, pdpw.DEM , pdpw.aspect, pdpw.TWI)
+pdfNAME = paste0(outDIR, "/", "Figure6.pdf")
+ggsave(pdfNAME, plot = last_plot(), width = 40, height = 20, units = 'cm')
 
-
-pdp.summer.DG
-plot_grid(pdp.summer.DG, pdp.summer.ET, pdp.summer.CHM, pdp.summer.DEM)
-
-#Plot both VIP plots together
-
-plot_grid(bar.summer, bar.winter, nrow = 2)
-plot_grid(
-  bar.summer,
-  ggdraw() + theme_void(),  # Empty plot for the line
-  bar.winter,
-  ncol = 1,
-  rel_heights = c(1, 0.05, 1)  # Adjust this to change the thickness of the line
-)
-
-# Add the line
-grid::grid.lines(x = c(0, 1), y = c(0.5, 0.5), gp = grid::gpar(col = "black"))
-
-plot_grid(bar.summer, bar.winter, labels = c("A", "B"), nrow = 2)
-plot_grid(pred.summer, pred.winter, labels = c("A", "B"), nrow = 2)
-plot_grid(pdp.summer.ET, pdp.summer.DG, pdp.summer.TRI, pdp.winter.CHM, pdp.winter.aspect, pdp.winter.ET, nrow = 2, labels = c("A", "B", "C", "D", "E", "F"))
+#Plot Figure S7
+aplot::plot_list(pdpw.ET, pdpw.DTSA, pdpw.DTSW, pdpw.DT, pdpw.DLS, pdpw.DG, pdpw.WG, pdpw.MO, pdpw.LI, pdpw.NPV, pdpw.CHM, pdpw.DEM, pdpw.slope, pdpw.aspect, pdpw.TPI, pdpw.TRI, pdpw.TWI, ncol = 4)
+pdfNAME = paste0(outDIR, "/", "FigureS7.png")
+ggsave(pdfNAME, plot = last_plot(), width = 60, height = 60, units = 'cm')
