@@ -106,11 +106,13 @@ R Subdirectory:
   
    * Outputs: A raster image representing the completion DOY for the spring albedo transition (second breakpoint) for each pixel across the Council, AK site (GeoTIFF, .tif). Low-light conditions and frequent cloud cover during early spring created significant uncertainty in the identification of the first breakpoint, so while it is calculated in this script, it is not used in the subsequent analyses of Shuman et al. (in prep).
  
-* **R/calculate_twi.R**: This script calculates the topographic wetness index (twi) by modifying the "whitebox" R package. TWI is used as a proxy for moisture when predicting surface albeodo in Shuman et a. (in prep).
+* **R/calculate_topography.R**: This script calculates the topographic wetness index (TPI), terrain ruggedness index (TRI), and topographic position index (TPI). TWI is calculated by modifying the "whitebox" R package and is used as a proxy for moisture when predicting surface albeodo in Shuman et a. (in prep). TRI and TPI are calculated using the "terrain" and "focal" functions in the raster or terra R packages.
 
-   * Inputs: 30 meter DEM raster image clipped to the Council, AK site; from Singhania et al. (2022) (GeoTIFF, .tif)
+   * Inputs:
+     * For TWI: 30 meter DEM and slope raster images clipped to the Council, AK site; from Singhania et al. (2022) (GeoTIFF, .tif)
+     * For TRI and TPI: Tabular file (.csv) of variables similar to that produced by IDL/albedo_image_statistics.pro, must contain at least the DEM and slope values
   
-   * Outputs: 30 meter DEM raster image clipped to the Council, AK site (GeoTIFF, .tif) 
+   * Outputs: 30 meter TWI, TRI, and TPI raster images (GeoTIFF, .tif) 
 
 * **R/Fig1_script.R**: This script loads and re-processes the vegetation, topography, and albedo data to optimize it for random forest implementation in the R environment, and also generates the plots used in Figure 1 of Shuman et al. (in prep). Re-processing includes bi-linear resampling to make sure all data sources are exactly the same extent and resoltion, as well as identifying all 30 meter pixels which contain >75% fractional cover for a single PFT (i.e. are dominated by one PFT).   
 
