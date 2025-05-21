@@ -507,6 +507,35 @@ summary(rq(winter_albedo ~ CHM, data = albedoCHM, tau = 0.5))
 plot_grid(summer.pft, winter.pft, summer.chm, winter.chm)
 #*****************************************************************************************#
 
+#*********** plot  number of pixels in each bin for supplement **************************#
+count.chm = albedoCHM %>% 
+  mutate(levels = cut(CHM, seq(0, 12, 1))) %>%
+  drop_na(levels, summer_albedo) %>%
+  ggplot(aes(x = levels)) +
+    geom_bar(color = "black", aes(fill = levels)) +
+    labs(title = "Number of Pixels per Canopy Height Bin",
+        x = "Canopy Height (m)",
+         y = "Count") +
+   scale_fill_manual(values = cols2)+
+   theme_minimal() +
+    theme(legend.position = c(0.75, 0.5), 
+          legend.title = element_blank(), 
+          legend.key.size = unit(0.75, 'cm'),
+          legend.text = element_text(size = 18),
+          axis.text = element_text(size=20, color = 'black'),
+          axis.text.x = element_text(, angle = 60, hjust = 1),
+          axis.title=element_text(size=26),
+          axis.line = element_line(colour = "black"),
+          plot.title = element_text(size = 30),
+          panel.background = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank())
+count.chm
+
+size_counts <- table(albedoCHM$Size)
+print(size_counts)
+#*****************************************************************************************#
+
 #******************************* plot  structure-albedo **********************************#
 # extract pft winter albedo
 albedoSTR <- cbind(dataORIG[3], dataORIG[c(18)], dataORIG[c(22, 23)])
@@ -771,7 +800,7 @@ for (pft in pfts[-c(6:8)]) {
 desired_order <-c("ET", "DT", "DTSA", "DTSW", "DLS", "DG", "WG", "MO", "LI", "NVS")
 combined_df$pft <- factor(combined_df$pft, levels = desired_order)
 
-#Plot all regressions for albedo v.s. PFT fCover (Figs. S2-3 depending on response variable)
+
 ggplot(data = combined_df, aes(x = fcover, y = albedoWT)) +
   geom_hex(aes(fill = stat(log(count))), bins = 50, breaks = log(c(0, 1, 2, 4, 6))) +
   scale_fill_viridis_c() +
@@ -798,7 +827,7 @@ ggplot(data = combined_df, aes(x = fcover, y = albedoWT)) +
         plot.margin = unit(c(0.1, 1, 0.1, 0.1), "cm")) +
   facet_wrap(~ pft)
 
-#Plot all regressions for albedo v.s. CHM (Figs. S4-5 depending on response variable)
+# Plot the data using facet_wrap for CHM
 ggplot(data = combined_df, aes(x = chm, y = albedoWT)) +
   geom_hex(aes(fill = stat(log(count))), bins = 50, breaks = log(c(0, 1, 2, 4, 6))) +
   scale_fill_viridis_c() +
