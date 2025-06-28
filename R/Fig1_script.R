@@ -1,6 +1,6 @@
 ###########################################################################################
 #
-#        This script loads and cleans data and recreates spatial plots in Figure 1 of Shuman et al.
+#        This script loads and cleans data and recreates spatial plots in Figure 1 and Figure S6 of Shuman et al.
 #
 #    --- Last updated:  2025.02.26 By Ian Shuman <ins2109@columbia.edu>
 ###########################################################################################
@@ -243,6 +243,35 @@ ggplot() +
     plot.background = element_blank()
   )
 
+
+
+breakpoints_df <- as.data.frame(breakpoints, xy = T)
+ggplot(breakpoints_df, aes(x = x, y = y, fill = break_point_30m)) +
+  geom_tile() +
+  coord_equal() +
+  scale_fill_gradientn(
+    colours = viridis(256),       # or viridis(256), plasma(256), etc.
+    na.value = "gray",
+    name = "DOY of Spring Albedo \nTransition Completion"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.title = element_text(size = 28),
+    legend.text = element_text(size = 26), 
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_blank(),
+    plot.background = element_blank(), 
+    legend.key.height = unit(0.8, "cm")
+  )
+
+hist(breakpoints_df$break_point_30m, xlab = "DOY of Spring Albedo Transition Completion", main = "Histogram of Breakpoint Identified DOY at Council, AK")
 
 
 
