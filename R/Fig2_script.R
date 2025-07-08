@@ -507,7 +507,7 @@ summary(rq(winter_albedo ~ CHM, data = albedoCHM, tau = 0.5))
 plot_grid(summer.pft, winter.pft, summer.chm, winter.chm)
 #*****************************************************************************************#
 
-#*********** plot  number of pixels in each bin for supplement **************************#
+#*********** plot  number of pixels in each bin for supplemental figure S1 **************************#
 count.chm = albedoCHM %>% 
   mutate(levels = cut(CHM, seq(0, 12, 1))) %>%
   drop_na(levels, summer_albedo) %>%
@@ -534,6 +534,105 @@ count.chm
 
 size_counts <- table(albedoCHM$Size)
 print(size_counts)
+
+
+albedoCHM.pft <- cbind(dataORIG[4], dataORIG[18], dataORIG[c(22, 23)])
+albedoCHM.pft[albedoCHM.pft > 10000] <- 10000
+albedoCHM.pft[albedoCHM.pft < 0] <- 0
+albedoCHM.pft <- na.omit(albedoCHM.pft)
+
+for (i in 1:nrow(albedoCHM.pft)){
+  if(albedoCHM.pft$CHM[i] > 0 && albedoCHM.pft$CHM[i] < 1){
+    albedoCHM.pft$Size[i] <- "<1 m"
+  }
+  if(albedoCHM.pft$CHM[i] > 1 && albedoCHM.pft$CHM[i] < 2){
+    albedoCHM.pft$Size[i] <- "1-2 m"
+  }
+  if(albedoCHM.pft$CHM[i] > 2 && albedoCHM.pft$CHM[i] < 3){
+    albedoCHM.pft$Size[i] <- "2-3 m"
+  }
+  if(albedoCHM.pft$CHM[i] > 3 && albedoCHM.pft$CHM[i] < 4){
+    albedoCHM.pft$Size[i] <- "3-4 m"
+  }
+  if(albedoCHM.pft$CHM[i] > 4 && albedoCHM.pft$CHM[i] < 5){
+    albedoCHM.pft$Size[i] <- "4-5 m"
+  }
+  if(albedoCHM.pft$CHM[i] > 5 && albedoCHM.pft$CHM[i] < 6){
+    albedoCHM.pft$Size[i] <- "5-6 m"
+  }
+  if(albedoCHM.pft$CHM[i] > 6 && albedoCHM.pft$CHM[i] < 7){
+    albedoCHM.pft$Size[i] <- "6-7 m"
+  }
+  if(albedoCHM.pft$CHM[i] > 7 && albedoCHM.pft$CHM[i] < 8){
+    albedoCHM.pft$Size[i] <- "7-8 m"
+  }
+  if(albedoCHM.pft$CHM[i] > 8){
+    albedoCHM.pft$Size[i] <- "8+ m"
+  }
+  
+}
+
+all_combinations <- expand.grid(
+  PFT = unique(albedoCHM.pft$PFT),
+  Size = unique(albedoCHM.pft$Size),
+  stringsAsFactors = FALSE
+)
+
+pixel_counts <- albedoCHM.pft %>%
+  group_by(PFT, Size) %>%
+  summarise(pixel_count = n(), .groups = "drop")
+
+complete_counts <- all_combinations %>%
+  left_join(pixel_counts, by = c("PFT", "Size")) %>%
+  mutate(pixel_count = replace_na(pixel_count, 0))
+
+complete_counts$Size <- factor(complete_counts$Size, 
+                               levels = sort(unique(albedoCHM.pft$Size)))
+complete_counts <- complete_counts %>%
+  mutate(PFT = case_when(
+    PFT == 1 ~ "ET",
+    PFT == 2 ~ "DT",
+    PFT == 3 ~ "DTSA",
+    PFT == 4 ~ "DTSW",
+    PFT == 5 ~ "DLS",
+    PFT == 9 ~ "DG",
+    PFT == 10 ~ "WG",
+    PFT == 11 ~ "MO",
+    PFT == 12 ~ "LI",
+    PFT == 13 ~ "NVS",
+    TRUE ~ NA_character_))
+
+#complete_counts <- complete_counts %>% filter(!is.na(PFT)) #Code for simply removing unclassified PFTs
+#complete_counts <- complete_counts %>%
+ # mutate(PFT = replace_na(PFT, "Unclassified"))
+
+pft_levels2 <- c("ET", "DT", "DTSA", "DTSW", "DLS", "DG", "WG", "MO", "LI", "NVS", "Unclassified")
+
+
+complete_counts <- complete_counts %>%
+  mutate(PFT = as.character(PFT),
+         PFT = replace_na(PFT, "Unclassified"),
+         PFT = factor(PFT, levels = pft_levels2))
+
+count.chm.pft <- ggplot(complete_counts, aes(x = Size, y = pixel_count, fill = as.factor(PFT))) +
+  geom_bar(stat = "identity", position = "dodge", color = "black") +
+  labs(x = "Canopy Height Bin", y = "Number of Pixels", fill = "PFT", title = "Number of Pixels in each Canopy Height Bin by PFT") +
+  theme_minimal()+
+  scale_fill_manual(values = c(cols, "lightgrey"), labels = c(pfts[-c(6:8)], "Unclassified"))+
+  theme(
+        legend.key.size = unit(0.4, 'cm'),
+        legend.text = element_text(size = 20),
+        legend.title = element_text(size = 22),
+        legend.spacing.x = unit(0.2, 'cm'),
+        legend.spacing.y = unit(0.2, 'cm')) +
+  theme(axis.text = element_text(size=22, color = 'black'),
+        axis.title=element_text(size=24), 
+        title = element_text(size = 24)) +
+  theme(axis.line = element_line(colour = "black"),
+        panel.background = element_blank(),
+        panel.grid.minor = element_blank())
+
+count.chm.pft
 #*****************************************************************************************#
 
 #******************************* plot  structure-albedo **********************************#
