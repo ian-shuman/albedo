@@ -167,11 +167,11 @@ R Subdirectory:
   
    * Outputs: No data outputs saved. All panels represented in Figure 3 in Shuman et al. (in prep) are plotted but not explicitly saved.
  
- * **R/Fig4_script.R**: This script plots variation in the completion date of the spring albedo transition (calculated in R/breakpoint_regression.R) by dominant PFT (>75% fractional cover) and by canopy height (in 1 m bins). Significance tests are conduced on the differences in transition completion DOY between dominant PFTs, and the fractional composition of dominant PFTs is calculated for each canopy height bin. These analyses are then used to create Figure 4 in Shuman et al. (in prep).    
+ * **R/Fig4_script.R**: This script plots variation in the completion date of the spring albedo transition (calculated in R/breakpoint_regression.R) by dominant PFT (>75% fractional cover) and by canopy height (in 1 m bins). Significance tests are conduced on the differences in transition completion DOY between dominant PFTs, and the fractional composition of dominant PFTs is calculated for each canopy height bin. These analyses are then used to create Figure 4 in Shuman et al. (in prep). This script also ingests Daymet snow water equivalent data (SWE) to produce figure S12.   
 
-   * Inputs: Data frame which is the output of R/Fig1_script.R. Alternatively, 30 meter raster images (GeoTIFF, .tif) of mean summer albedo, mean winter albedo, canopy height, aspect, slope, DEM, TPI, TRI, fractional cover of each PFT, dominant PFT at a pixel, TWI, and the first and second (optional) DOY breakpoints of the spring albedo transition which are generated as outputs in the scripts above can be used as inputs to generate a nearly identical dataframe in this script. 
+   * Inputs: Data frame which is the output of R/Fig1_script.R. Alternatively, 30 meter raster images (GeoTIFF, .tif) of mean summer albedo, mean winter albedo, canopy height, aspect, slope, DEM, TPI, TRI, fractional cover of each PFT, dominant PFT at a pixel, TWI, and the first and second (optional) DOY breakpoints of the spring albedo transition which are generated as outputs in the scripts above can be used as inputs to generate a nearly identical dataframe in this script. Daymet analyses require Daymet data (see third party data) and a 30 meter raster image (GeoTIFF, .tif) for cropping Daymet to the extent of the Council site. 
 
-   * Outputs: No data outputs saved. All plots representing Figure 4 in Shuman et al. (in prep) are saved to a user-specified directory.
+   * Outputs: No data outputs saved. All plots representing Figures 4 and S12 in Shuman et al. (in prep) are saved to a user-specified directory.
 
  * **R/Fig56_script.R**: This script uses a random forest model to predict winter and summer surface albedo from the vegetation composition, vegetation structure, topography, and moisture variables. The output of the random forest model is analyzed for variable importance, partial least squares regression (PLSR) is used to determine the goodness of fit for the random forest models, and partial dependence plots are created for each predictor variable. The variable importance analyses are used to create Figure 5, the PLSR check are used to create Figure S6, and the partial dependence plots are used to creat Figures 6 and S7 in Shuman et al. (in prep).
 
@@ -203,4 +203,9 @@ R Subdirectory:
 
 * Raw data:
   * Singhania A; Glennie C; Fernandez-Diaz J; Hauser D (2023): National Center for Airborne Laser Mapping (NCALM) LiDAR, Imagery, and DEM data from five NGEE Arctic Sites, Seward Peninsula, Alaska, August 2021. Next-Generation Ecosystem Experiments (NGEE) Arctic, ESS-DIVE repository. Dataset. doi:10.5440/1832016 accessed via https://data.ess-dive.lbl.gov/datasets/doi:10.5440/1832016 on 2025-03-18
+
+## Snow Water Equivalent (SWE)
+
+* Raw data:
+  * Thornton, M. M., Shrestha, R., Wei, Y., Thornton, P. E., & Kao, S.-C. (2022). JDaymet: Daily Surface Weather Data on a 1-km Grid for North America, Version 4 R1 (Version 4.1, p. 0 MB) [netCDF]. ORNL Distributed Active Archive Center. https://doi.org/10.3334/ORNLDAAC/2129
     
