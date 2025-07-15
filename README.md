@@ -177,7 +177,13 @@ R Subdirectory:
 
    * Inputs: Data frame which is the output of R/Fig1_script.R. 
 
-   * Outputs: No data outputs saved. All panels represented in Figures 5-6 and S6-S7 in Shuman et al. (in prep) are plotted and saved to a user-specified directory. We recommend saving the workspace image of the R environment to avoid re-running this computationally intensive script. 
+   * Outputs: No data outputs saved. All panels represented in Figures 5-6 and S6-S7 in Shuman et al. (in prep) are plotted and saved to a user-specified directory. We recommend saving the workspace image of the R environment to avoid re-running this computationally intensive script.
+
+* **R/FigS2_script.R**: This script describes the summarizing, filtering, and smoothing process done in IDL to create supplemental figure S2. 
+
+   * Inputs: A raster file (.dat and .hdr) representing the raw albedo observations produced by IDL/step2_layerstack_images.pro and a raster file (.dat and .hdr) representing the filtered and smoothed albedo observatiosn produced by IDL/step3_time_series_smooth.pro.
+  
+   * Outputs: No data outputs are saved. All plots representing Figure S2 are saved to a user-specified directory.
   
 # Third-Party Data Availability
 
