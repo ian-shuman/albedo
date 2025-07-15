@@ -25,6 +25,7 @@ This repository is primarily built in the R environment using R version 4.4.0.
 * `haven` v. 2.5.4
 * `Metrics` v. 0.1.4
 * `multcompView` v. 0.1.10
+* `ncdf4` v. 1.24
 * `pdp` v. 0.8.1
 * `pls` v. 2.8.3
 * `quantreg` v. 5.98
