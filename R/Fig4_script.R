@@ -1,6 +1,6 @@
 ###########################################################################################
 #
-#        This script recreates figure 4 in Shuman et al.
+#        This script recreates figures 4 and S12 in Shuman et al.
 #
 #    --- Last updated:  2025.03.08 By Ian Shuman <ins2109@columbia.edu>
 ###########################################################################################
@@ -16,7 +16,7 @@ options(warn = -1)
 #****************************** load required libraries **********************************#
 ### install and load required R packages
 list.of.packages <- c('raster', 'caTools', 'haven', 'terra', 'ggplot2', 'dplyr', 'cowplot', 
-                      'grid', 'gtable', 'ggfun', 'scatterpie', 'viridis', 'multcompView', 'tidyverse', 'ggpattern')
+                      'grid', 'gtable', 'ggfun', 'scatterpie', 'viridis', 'multcompView', 'tidyverse', 'ggpattern', 'ncdf4')
 # check for dependencies and install if needed
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages, dependencies=c("Depends", "Imports",
@@ -340,25 +340,86 @@ ggsave(pdfNAME, plot = last_plot(), width = 40, height = 20, units = 'cm')
 
 
 
+#******************** figure S12 (SWE data) *************************#
+#Download the Daymet SWE data from https://thredds.daac.ornl.gov/thredds/catalog/ornldaac/2129/tiles/catalog.html
+#Council site is within grid 13869 in the Daymet data
+
+Council_raster <- raster("albedo/Data/council_watershed_fcover_30m.dat")  #For cropping Daymet data
+
+# Load all SWE rasters into a list
+swe.years <- list(
+  brick("~/Downloads/swe.nc"), #2013 netCDF
+  brick("~/Downloads/swe(1).nc"), #2014 netCDF
+  brick("~/Downloads/swe(2).nc"), #2015 netCDF
+  brick("~/Downloads/swe(3).nc"), #2016 netCDF
+  brick("~/Downloads/swe(4).nc"), #2017 netCDF
+  brick("~/Downloads/swe(5).nc"), #2018 netCDF
+  brick("~/Downloads/swe(6).nc") #2019 netCDF
+)
+
+# Crop each raster to the extent of the Council Site
+swe.cropped <- lapply(swe.years, function(r) {
+  r_proj <- projectRaster(r, crs = crs(Council_raster))  
+  crop(r_proj, extent(Council_raster))                   
+})
+
+for (i in seq_along(swe.cropped)) {
+  plot(swe.cropped[[i]][[1]], 
+       main = paste("SWE", 2013 + (i - 1)),
+       col = terrain.colors(20))
+}
 
 
+#Identify the maximum value of SWE for each pixel for each year
+swe.max <- lapply(swe.cropped, function(r) {
+  calc(r, fun = max, na.rm = TRUE)
+})
 
+#Plot annual maximum SWE
+for (i in seq_along(swe.max)) {
+  plot(swe.max[[i]],
+       main = paste("Max SWE", 2013 + (i - 1)),
+       col = terrain.colors(30))
+}
 
+#Calculate the average maximum SWE for each pixel across all years
+swe.max.stack <- stack(swe.max)
+swe.max.mean <- calc(swe.max.stack, fun = mean, na.rm = TRUE)
+plot(swe.max.mean,
+     main = "Mean of Annual Max SWE (2013–2019)",
+     col = viridis(30))
+swe_rast_terra <- rast(swe.max.mean) #for mean annual maximum swe between 2013-2019
 
+swe.resamp <- resample(swe_rast_terra, fcover, method = "near")
+swe.stack <- c(chm.resamp, breakpoints.resamp, swe.resamp)
+swe.df <- as.data.frame(swe.stack)
 
+names(swe.stack) <- c("CHM", "Breakpoint", "SWE")  # Assign clean names
+swe.df <- as.data.frame(swe.stack, xy = TRUE, na.rm = TRUE)
 
+plot(swe.resamp,
+     main = "Mean Annual Maximum SWE from 2013–2019 (kg/m²)",
+     col = viridis(30))
 
+swe.df %>% 
+  mutate(levels = cut(CHM, seq(0, 12, 1))) %>%
+  drop_na(levels, CHM) %>%
+  ggplot(aes(x = levels, y = SWE)) +
+  geom_point(alpha = 0.4, color = "#33a02c") +
+  labs(x = "Canopy Height (m)", y = "SWE (kg/m²)", title = "SWE vs Canopy Height") +
+  theme_minimal()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+swe.df %>% 
+  mutate(levels = cut(CHM, seq(0, 12, 1))) %>%
+  drop_na(levels, CHM) %>%
+  ggplot(aes(x = levels, y = SWE)) +
+  geom_boxplot(aes(fill = levels), outlier.shape = NA, width = .9) +
+  scale_fill_manual(values = viridis(12))+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(x = "Binned Canopy Height (m)", y = "Mean Annual Maximum SWE\n 2013-2019 (kg/m²)")+
+  theme_classic() +
+  theme(axis.text = element_text(size=21, color = 'black'),
+        axis.title=element_text(size=25),
+        axis.text.x = element_text(angle = 60, hjust = 1), 
+        legend.position = "none", 
+        aspect.ratio = 1)
