@@ -1,6 +1,6 @@
 ###########################################################################################
 #
-#        This script loads and cleans data and recreates spatial plots in Figure 1 and Figure S6 of Shuman et al.
+#        This script loads and cleans data and recreates spatial plots in Figure 1 and Figure S8 of Shuman et al.
 #
 #    --- Last updated:  2025.02.26 By Ian Shuman <ins2109@columbia.edu>
 ###########################################################################################
