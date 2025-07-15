@@ -116,7 +116,7 @@ R Subdirectory:
   
    * Outputs: 30 meter TWI, TRI, and TPI raster images (GeoTIFF, .tif) 
 
-* **R/Fig1_script.R**: This script loads and re-processes the vegetation, topography, and albedo data to optimize it for random forest implementation in the R environment, and also generates the plots used in Figure 1 of Shuman et al. (in prep). Re-processing includes bi-linear resampling to make sure all data sources are exactly the same extent and resoltion, as well as identifying all 30 meter pixels which contain >75% fractional cover for a single PFT (i.e. are dominated by one PFT).   
+* **R/Fig1_script.R**: This script loads and re-processes the vegetation, topography, and albedo data to optimize it for random forest implementation in the R environment, and also generates the plots used in Figures 1 and S8 of Shuman et al. (in prep). Re-processing includes bi-linear resampling to make sure all data sources are exactly the same extent and resoltion, as well as identifying all 30 meter pixels which contain >75% fractional cover for a single PFT (i.e. are dominated by one PFT).   
 
    * Inputs: Tabular file (.csv) of variables similar to that produced by IDL/albedo_image_statistics.pro.
   
@@ -151,11 +151,11 @@ R Subdirectory:
        * End date of spring albedo transition (DOY)
      * Plots representing panels (A), (B), and (C) of Figure 1 in Shuman et al. (in prep) depicting the location of the Council, AK site (A), the PFT with the highest fractional cover for each pixel across the site (B), and the variation in winter albedo across the site (C).  
   
-* **R/Fig2_script.R**: This script analyzes variation in summer and winter albedo versus multiple formulations of plant functional type and canopy height and uses that information to create Figures 2 and S1-S5 from Shuman et al. (in prep). Significance tests comparing seasonal albedo between pixels dominated by different PFTs and by different 1 meter bins of canopy height are conducted, but are not presented in Shuman et al. (in prep). 
+* **R/Fig2_script.R**: This script analyzes variation in summer and winter albedo versus multiple formulations of plant functional type and canopy height and uses that information to create Figures 2, S4-S7, and S11 from Shuman et al. (in prep). Significance tests comparing seasonal albedo between pixels dominated by different PFTs and by different 1 meter bins of canopy height are conducted, but are not presented in Shuman et al. (in prep). 
 
    * Inputs: Tabular file (.csv) of variables similar to that produced by IDL/albedo_image_statistics.pro. The file is reprocessed in this script, the .RData file developed in R/Fig1_script.R is not used here. 
   
-   * Outputs: No data outputs saved. All plots representing Figures 2 and S1-S5 in Shuman et al. (in prep) are saved to a user-specified directory.
+   * Outputs: No data outputs saved. All plots representing Figures 2, S4-S7, and S11 in Shuman et al. (in prep) are saved to a user-specified directory.
  
 * **R/Fig3_script.R**: This script visualizes the surface albedo time series by dominant PFT (>75% fractional cover) and canopy height (binned in 1 meter increments) using a 15 day moving-window average. These visualizations are used to create Figure 3 in Shuman et al., (in prep). 
 
