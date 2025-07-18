@@ -1,6 +1,6 @@
 ###########################################################################################
 #
-#        This script recreates figures 2, S4-S7, and S11 in Shuman et al.
+#        This script recreates figures 2 and S1-S5 in Shuman et al.
 #
 #    --- Last updated:  2025.02.06 By Ian Shuman <ins2109@columbia.edu>
 ###########################################################################################
@@ -111,6 +111,7 @@ dataORIG2$PFT3 <- sapply(dataORIG2$PFT2, function(x) {
     return(NA) # Placeholder for lists with more than one element
   }
 })
+piechart.data <- dataORIG2
 dataORIG2 <- dataORIG2[!is.na(dataORIG2$PFT3), ]
 dataORIG2 <- dataORIG2[, !names(dataORIG2) %in% c("PFT2", "PFT3")]
 
@@ -174,8 +175,8 @@ winter.pft = ggplot(data = albedoWT_plot, aes(x=as.factor(PFT), y=winter_albedo,
         legend.title = element_blank(), 
         legend.key.size = unit(0.75, 'cm'),
         legend.text = element_text(size = 12),
-        axis.text = element_text(size=20, color = 'black'),
-        axis.title = element_text(size=26),
+        axis.text = element_text(size=22, color = 'black'),
+        axis.title = element_text(size=30),
         axis.line = element_line(colour = "black"),
         panel.background = element_blank(),
         panel.grid.major = element_blank(),
@@ -323,8 +324,8 @@ summer.pft = ggplot(data = albedoSM_plot, aes(x=as.factor(PFT), y=summer_albedo,
         legend.title = element_blank(), 
         legend.key.size = unit(1, 'cm'),
         legend.text = element_text(size = 18),
-        axis.text = element_text(size=20, color = 'black'),
-        axis.title=element_text(size=26),
+        axis.text = element_text(size=22, color = 'black'),
+        axis.title=element_text(size=30),
         axis.line = element_line(colour = "black"),
         panel.background = element_blank(),
         panel.grid.major = element_blank(),
@@ -434,19 +435,25 @@ for (i in 1:nrow(albedoCHM)){
   
 }
 
-cols2 = viridis(n = 12)
+cols2 = viridis(n = 9)
 # make a plot for CHM and winter albedo
 nonTSK <- mean(albedoWT[which(albedoWT$PFT>5),15])
 albedoCHM$Size <- as.factor(albedoCHM$Size)
 albedoCHM$Size <- factor(albedoCHM$Size, levels = (levels(albedoCHM$Size)))
 winter.chm = albedoCHM %>% 
-  mutate(levels = cut(CHM, seq(0, 12, 1))) %>%
+  mutate(levels = cut(
+    CHM,
+    breaks = c(seq(0, 8, by = 1), Inf),
+    right = FALSE,  # So that 8 falls into the final bin, not the previous
+    labels = c("0–1", "1–2", "2–3", "3–4", "4–5", "5–6", "6–7", "7–8", "8+"),
+    include.lowest = TRUE
+  )) %>%
   drop_na(levels, winter_albedo) %>%
   ggplot(aes(x=levels, y=winter_albedo)) +
   geom_boxplot(outlier.shape = NA, aes(fill = levels)) +
   #geom_smooth(data = albedoCHM, method = "lm", aes(x = CHM, y = winter_albedo), color = "blue")+
   #geom_hline(yintercept = nonTSK, linetype="dashed") +
-  xlab("Canopy Height") + ylab("Winter Albedo") + ylim(0, 1) + coord_cartesian(xlim = c(1, 12)) +
+  xlab("Canopy Height (m)") + ylab("Winter Albedo") + ylim(0, 1) + coord_cartesian(xlim = c(1, 9)) +
   #scale_fill_manual(values = c("red", "blue"), name = "", labels = c("Short", "Tall")) +
   #scale_x_discrete(labels = pfts[-c(6:8)]) +
   #geom_segment(aes(x = 2.05, xend = 2.25, y = 0.0, yend = 0.0),  size = 1, 
@@ -460,9 +467,9 @@ winter.chm = albedoCHM %>%
         legend.title = element_blank(), 
         legend.key.size = unit(0.75, 'cm'),
         legend.text = element_text(size = 12),
-        axis.text = element_text(size=20, color = 'black'),
+        axis.text = element_text(size=22, color = 'black'),
         axis.text.x = element_text(, angle = 60, hjust = 1),
-        axis.title=element_text(size=26),
+        axis.title=element_text(size=30),
         axis.line = element_line(colour = "black"),
         panel.background = element_blank(),
         panel.grid.major = element_blank(),
@@ -471,13 +478,19 @@ winter.chm = albedoCHM %>%
 #summer albedo and CHM
 nonTSK <- mean(albedoSM[which(albedoSM$PFT>5),15])
 summer.chm = albedoCHM %>% 
-  mutate(levels = cut(CHM, seq(0, 12, 1))) %>%
+  mutate(levels = cut(
+    CHM,
+    breaks = c(seq(0, 8, by = 1), Inf),
+    right = FALSE,  # So that 8 falls into the final bin, not the previous
+    labels = c("0–1", "1–2", "2–3", "3–4", "4–5", "5–6", "6–7", "7–8", "8+"),
+    include.lowest = TRUE
+  )) %>%
   drop_na(levels, summer_albedo) %>%
   ggplot(aes(x=levels, y=summer_albedo)) +
   geom_boxplot(outlier.shape = NA, aes(fill = levels)) +
   #geom_smooth(data = albedoCHM, method = "lm", aes(x = CHM, y = summer_albedo), color = "blue")+
   #geom_hline(yintercept = nonTSK, linetype="dashed") +
-  xlab("Canopy Height") + ylab("Summer Albedo") + ylim(0, 0.22) + coord_cartesian(xlim = c(1, 12)) +
+  xlab("Canopy Height (m)") + ylab("Summer Albedo") + ylim(0, 0.22) + coord_cartesian(xlim = c(1, 9)) +
   #scale_fill_manual(values = c("red", "blue"), name = "", labels = c("Short", "Tall")) +
   #scale_x_discrete(labels = pfts[-c(6:8)]) +
   #geom_segment(aes(x = 2.5, xend = 2.95, y = 0.06, yend = 0.06),  size = 1, 
@@ -490,9 +503,9 @@ summer.chm = albedoCHM %>%
         legend.title = element_blank(), 
         legend.key.size = unit(0.75, 'cm'),
         legend.text = element_text(size = 18),
-        axis.text = element_text(size=20, color = 'black'),
+        axis.text = element_text(size=24, color = 'black'),
         axis.text.x = element_text(, angle = 60, hjust = 1),
-        axis.title=element_text(size=26),
+        axis.title=element_text(size=30),
         axis.line = element_line(colour = "black"),
         panel.background = element_blank(),
         panel.grid.major = element_blank(),
@@ -507,22 +520,24 @@ summary(rq(winter_albedo ~ CHM, data = albedoCHM, tau = 0.5))
 plot_grid(summer.pft, winter.pft, summer.chm, winter.chm)
 #*****************************************************************************************#
 
-#*********** plot  number of pixels in each bin for supplemental figure S1 **************************#
+#*********** plot  number of pixels in each bin for supplemental figure S3 **************************#
 count.chm = albedoCHM %>% 
   mutate(levels = cut(CHM, seq(0, 12, 1))) %>%
   drop_na(levels, summer_albedo) %>%
-  ggplot(aes(x = levels)) +
-    geom_bar(color = "black", aes(fill = levels)) +
+  ggplot(aes(x = Size)) +
+    geom_bar(color = "black", 
+             #aes(fill = levels)
+             ) +
     labs(title = "Number of Pixels per Canopy Height Bin",
         x = "Canopy Height (m)",
-         y = "Count") +
+         y = "Pixel Count") +
    scale_fill_manual(values = cols2)+
    theme_minimal() +
     theme(legend.position = c(0.75, 0.5), 
           legend.title = element_blank(), 
           legend.key.size = unit(0.75, 'cm'),
           legend.text = element_text(size = 18),
-          axis.text = element_text(size=20, color = 'black'),
+          axis.text = element_text(size=22, color = 'black'),
           axis.text.x = element_text(, angle = 60, hjust = 1),
           axis.title=element_text(size=26),
           axis.line = element_line(colour = "black"),
@@ -533,6 +548,10 @@ count.chm = albedoCHM %>%
 count.chm
 
 size_counts <- table(albedoCHM$Size)
+
+print(table(cut(CHM, seq(0, 12, 1))))
+
+      
 print(size_counts)
 
 
@@ -578,14 +597,17 @@ all_combinations <- expand.grid(
   stringsAsFactors = FALSE
 )
 
+# Count pixels per PFT and Size
 pixel_counts <- albedoCHM.pft %>%
   group_by(PFT, Size) %>%
   summarise(pixel_count = n(), .groups = "drop")
 
+# Join with all combinations to ensure completeness
 complete_counts <- all_combinations %>%
   left_join(pixel_counts, by = c("PFT", "Size")) %>%
   mutate(pixel_count = replace_na(pixel_count, 0))
 
+# Optional: order Size as a factor (e.g., "0-1 m", "1-2 m", ...)
 complete_counts$Size <- factor(complete_counts$Size, 
                                levels = sort(unique(albedoCHM.pft$Size)))
 complete_counts <- complete_counts %>%
@@ -601,10 +623,11 @@ complete_counts <- complete_counts %>%
     PFT == 12 ~ "LI",
     PFT == 13 ~ "NVS",
     TRUE ~ NA_character_))
+#complete_counts <- na.omit(complete_counts)
 
-#complete_counts <- complete_counts %>% filter(!is.na(PFT)) #Code for simply removing unclassified PFTs
+#complete_counts <- complete_counts %>% filter(!is.na(PFT))
 #complete_counts <- complete_counts %>%
- # mutate(PFT = replace_na(PFT, "Unclassified"))
+# mutate(PFT = replace_na(PFT, "Unclassified"))
 
 pft_levels2 <- c("ET", "DT", "DTSA", "DTSW", "DLS", "DG", "WG", "MO", "LI", "NVS", "Unclassified")
 
@@ -614,17 +637,19 @@ complete_counts <- complete_counts %>%
          PFT = replace_na(PFT, "Unclassified"),
          PFT = factor(PFT, levels = pft_levels2))
 
-count.chm.pft <- ggplot(complete_counts, aes(x = Size, y = pixel_count, fill = as.factor(PFT))) +
+
+# Plot
+coun.chm.pft <- ggplot(complete_counts, aes(x = Size, y = pixel_count, fill = as.factor(PFT))) +
   geom_bar(stat = "identity", position = "dodge", color = "black") +
   labs(x = "Canopy Height Bin", y = "Number of Pixels", fill = "PFT", title = "Number of Pixels in each Canopy Height Bin by PFT") +
   theme_minimal()+
   scale_fill_manual(values = c(cols, "lightgrey"), labels = c(pfts[-c(6:8)], "Unclassified"))+
   theme(
-        legend.key.size = unit(0.4, 'cm'),
-        legend.text = element_text(size = 20),
-        legend.title = element_text(size = 22),
-        legend.spacing.x = unit(0.2, 'cm'),
-        legend.spacing.y = unit(0.2, 'cm')) +
+    legend.key.size = unit(0.4, 'cm'),
+    legend.text = element_text(size = 20),
+    legend.title = element_text(size = 22),
+    legend.spacing.x = unit(0.2, 'cm'),
+    legend.spacing.y = unit(0.2, 'cm')) +
   theme(axis.text = element_text(size=22, color = 'black'),
         axis.title=element_text(size=24), 
         title = element_text(size = 24)) +
@@ -634,6 +659,84 @@ count.chm.pft <- ggplot(complete_counts, aes(x = Size, y = pixel_count, fill = a
 
 count.chm.pft
 #*****************************************************************************************#
+
+#indicate the number of pixels for each PFT, including the fraction of all pixels for each
+#PFT, and the number of pixels without a PFT fCover >75%.
+
+
+for(i in 1:nrow(piechart.data)){
+  if(is.na(piechart.data$PFT3[i])){
+    piechart.data$PFT3[i] <- "None"
+  }
+}
+pft75_counts <- table(piechart.data$PFT3)
+print(pft75_counts)
+
+pie(pft75_counts, col = c(cols[6], cols[5], cols[2], cols[3], cols[4], '#66FFFF', cols[1], cols[9], cols[8], "black", cols[10], cols[7]))
+
+
+#do the same for dominant PFT
+piechart.data2 <- dataORIG %>%
+  mutate(PFT = case_when(
+    PFT == 0 ~ "Unclassified",
+    PFT == 1 ~ "ET",
+    PFT == 2 ~ "DT",
+    PFT == 3 ~ "DTSA",
+    PFT == 4 ~ "DTSW",
+    PFT == 5 ~ "DLS",
+    PFT == 7 ~ "ES", 
+    PFT == 9 ~ "DG",
+    PFT == 10 ~ "WG",
+    PFT == 11 ~ "MO",
+    PFT == 12 ~ "LI",
+    PFT == 13 ~ "NVS",
+    TRUE ~ NA_character_))
+
+pftdom_counts <- table(piechart.data2$PFT)
+print(pftdom_counts)
+pie(pftdom_counts, col = c(cols[6], cols[5], cols[2], cols[3], cols[4], cols[1], cols[9], cols[8], cols[10], cols[7]))
+
+
+pftdom_counts <- data.frame(PFT = names(pftdom_counts), Count = as.integer(pftdom_counts))
+
+#Clean it up as a table
+library(gt)
+df <- data.frame(
+  PFT = c("ET", "DT", "DTSA", "DTSW", "DLS", "DG", "WG", "MO", "LI", "NVS", "Unclassified", "No PFT >75% fCover"),
+  `Pixels where PFT is highest fCover` = c(493, 509, 3721, 2998, 5270, 3698, 1036, 221, 1128, 415, 533, NA),
+  `Pixels where PFT is >75% fCover` = c(50, 116, 2673, 938, 168, 15, 159, 14, 143, 30, NA, 15716)
+)
+
+# Create a styled table
+df %>%
+  gt() %>%
+  tab_header(
+    title = "Count of Pixels with Highest fCover and with >75% fCover by PFT"
+  ) %>%
+  cols_label(
+    PFT = "PFT",
+    `Pixels.where.PFT.is.highest.fCover` = "# Pixels with PFT as Highest fCover",
+    `Pixels.where.PFT.is..75..fCover` = "# Pixels with >75% fCover"
+  ) %>%
+  fmt_number(
+    columns = c(`Pixels.where.PFT.is.highest.fCover`, `Pixels.where.PFT.is..75..fCover`),
+    use_seps = TRUE, 
+    decimals = 0
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything())
+  ) %>%
+  tab_options(
+    table.font.size = 24,
+    table.width = pct(100),
+    data_row.padding = px(10),  
+    heading.title.font.size = 28,
+    column_labels.font.size = 28
+    )
+  )
+
+
 
 #******************************* plot  structure-albedo **********************************#
 # extract pft winter albedo
