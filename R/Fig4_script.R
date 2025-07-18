@@ -229,9 +229,9 @@ t.test(short_df$break_point_30m, tall_df$break_point_30m) #Student's t-test to s
 #Calculate mean breakpoint DOY for the 1m CHM bins
 bin_means = data.frame(matrix(vector("logical"), ncol = 14))
 colnames(bin_means) = colnames (stack_df[,c(3, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24)])
-for (i in 0:11){
+for (i in 0:8){
   start = i
-  finish = i + 1
+  if(i < 8){finish = i + 1} else if (i == 8) {finish = 12}
   bin_init = filter(stack_df, council_watershed_chm_30m > start & council_watershed_chm_30m < finish)
   bin = bin_init[,c(3, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24)]
   colnames(bin) = colnames(stack_df[,c(3, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24)])
@@ -245,11 +245,23 @@ colnames(bin_means) = c("CHM (m)", "ET", "DTSA", "DTSW", "DT", "LS", "DS", "ES",
 bin_means$Y <- rep(as.numeric(175), nrow(bin_means))
 bin_means$group <- c(0:(nrow(bin_means)-1))
 #bin_means <- bin_means[1:16, ]
+bin_levels <- c("0–1", "1–2", "2–3", "3–4", "4–5", "5–6", "6–7", "7–8", "8+")
 
+# Create bin assignment from CHM column
+bin_means$Bin <- cut(
+  bin_means$`CHM (m)`,
+  breaks = c(seq(0, 8, by = 1), Inf),
+  right = FALSE,
+  labels = bin_levels,
+  include.lowest = TRUE
+)
+
+# Then assign 'long' (X position) based on bin factor order
+bin_means$long <- as.numeric(factor(bin_means$Bin, levels = bin_levels))
 
 #Create df to use for pie chart inset
-long <- seq(1, 12, 1)
-lat <- rep(130, 12)
+long <- seq(1, 9, 1)
+lat <- rep(130, 9)
 #seq((130 + 15*2), 130, -2)
 d <- data.frame(long=long, lat=lat)
 n <- nrow(d)
@@ -267,7 +279,7 @@ d$NPV <- bin_means$NPV * 100
 
 inset <-  ggplot() + #make the pft pie charts to show fCover for each CHM bin
   coord_equal() + 
-  geom_scatterpie(aes(x=long, y=lat, group=region, r = .45), data=d,cols=c("ET", "DTSA", "DTSW", "DT", "DLS", "DG", "WG", "MO", "LI", "NPV"))+
+  geom_scatterpie(aes(x=long*0.2, y=lat, group=region, r = .1), data=d,cols=c("ET", "DTSA", "DTSW", "DT", "DLS", "DG", "WG", "MO", "LI", "NPV"))+
   scale_fill_manual(values = c('#FF0000', '#008000', '#00CD00', '#669999', '#0066FF', '#00FF67', '#FF67FF', '#CC6600', '#FFFFFF', '#5A5A5A'))+
   theme_classic()+
   theme(legend.position = "none",
@@ -296,9 +308,15 @@ legend.plot <-  ggplot(data = ldf, aes(x=X, y=Y, fill = PFT)) + #legend for PFT 
 legend <- get_legend(legend.plot)
 
 #Make the actual DOY v.s CHM boxplot with optional regression lines (not included in final manuscript due to non-linear relationship)
-cols = viridis(12)
+cols = viridis(9)
 All_box <- stack_df %>%
-  mutate(levels = cut(council_watershed_chm_30m, seq(0, 12, 1))) %>%
+  mutate(levels = cut(
+    council_watershed_chm_30m,
+    breaks = c(seq(0, 8, by = 1), Inf),
+    right = FALSE,  # So that 8 falls into the final bin, not the previous
+    labels = c("0–1", "1–2", "2–3", "3–4", "4–5", "5–6", "6–7", "7–8", "8+"),
+    include.lowest = TRUE
+  )) %>%
   drop_na(levels, break_point_30m) %>%
   ggplot(aes(x = levels, y = break_point_30m)) +
   geom_boxplot(aes(fill = levels), outlier.shape = NA, width = .9) +
@@ -322,7 +340,7 @@ summary(lm(data = tall_df, break_point_30m ~ council_watershed_chm_30m))
 Fig4b<- All_box + 
   annotation_custom(
     grob = ggplotGrob(inset), 
-    xmin = -0.25, xmax = 13.5, ymin = 120, ymax = 130)+
+    xmin = 0, xmax = 10, ymin = 121, ymax = 131)+
   annotation_custom(
     grob = legend, 
     xmin = 10, xmax = 12, ymin = 150, ymax = 170)
@@ -331,7 +349,7 @@ Fig4b
 
 ##### Combine and save Figures 4a and 4b ######
 
-plot_grid(Fig4a_Tukey, Fig4b)
+plot_grid(Fig4a_Tukey, Fig4b, align = "h", axis = "tb")
 
 outDIR <- "/Users/anncrumlish/Downloads/albedo analysis/map_stats"
 pdfNAME = paste0(outDIR, "/", "Figure4.pdf")
@@ -402,7 +420,13 @@ plot(swe.resamp,
      col = viridis(30))
 
 swe.df %>% 
-  mutate(levels = cut(CHM, seq(0, 12, 1))) %>%
+  mutate(levels = cut(
+    CHM,
+    breaks = c(seq(0, 8, by = 1), Inf),
+    right = FALSE,  # So that 8 falls into the final bin, not the previous
+    labels = c("0–1", "1–2", "2–3", "3–4", "4–5", "5–6", "6–7", "7–8", "8+"),
+    include.lowest = TRUE
+  )) %>%
   drop_na(levels, CHM) %>%
   ggplot(aes(x = levels, y = SWE)) +
   geom_point(alpha = 0.4, color = "#33a02c") +
@@ -410,11 +434,17 @@ swe.df %>%
   theme_minimal()
 
 swe.df %>% 
-  mutate(levels = cut(CHM, seq(0, 12, 1))) %>%
+  mutate(levels = cut(
+    CHM,
+    breaks = c(seq(0, 8, by = 1), Inf),
+    right = FALSE,  # So that 8 falls into the final bin, not the previous
+    labels = c("0–1", "1–2", "2–3", "3–4", "4–5", "5–6", "6–7", "7–8", "8+"),
+    include.lowest = TRUE
+  )) %>%
   drop_na(levels, CHM) %>%
   ggplot(aes(x = levels, y = SWE)) +
   geom_boxplot(aes(fill = levels), outlier.shape = NA, width = .9) +
-  scale_fill_manual(values = viridis(12))+
+  scale_fill_manual(values = viridis(9))+
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
   labs(x = "Binned Canopy Height (m)", y = "Mean Annual Maximum SWE\n 2013-2019 (kg/m²)")+
   theme_classic() +
@@ -423,3 +453,24 @@ swe.df %>%
         axis.text.x = element_text(angle = 60, hjust = 1), 
         legend.position = "none", 
         aspect.ratio = 1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
